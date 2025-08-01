@@ -87,11 +87,11 @@ async function monitorNewReviews() {
       }
     });
 
-    console.log('🔍 신규 리뷰 검증 시작... (GitHub Actions - 최근 5분)');
+    console.log('🔍 신규 리뷰 검증 시작... (GitHub Actions - 최근 10분)');
 
-    // 최근 5분 내 신규 리뷰만 조회
+    // 최근 10분 내 신규 리뷰만 조회 (GitHub Actions 실행 간격 불규칙 대응)
     const now = new Date();
-    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    const tenMinutesAgo = new Date(now.getTime() - 10 * 60 * 1000);
     
     // KST 형식으로 변환하여 출력
     const toKSTString = (date) => {
@@ -99,7 +99,7 @@ async function monitorNewReviews() {
       return kst.toISOString().replace('T', ' ').slice(0, 19);
     };
     
-    console.log(`체크 기준 시간 (KST): ${toKSTString(fiveMinutesAgo)}`);
+    console.log(`체크 기준 시간 (KST): ${toKSTString(tenMinutesAgo)}`);
     console.log(`현재 시간 (KST): ${toKSTString(now)}`);
 
     const [newReviews] = await connection.execute(`
@@ -117,29 +117,41 @@ async function monitorNewReviews() {
       LEFT JOIN Companies comp ON c.companyId = comp.id
       WHERE p.review IS NOT NULL 
         AND p.review != ''
-        AND p.reviewRegisteredAt > DATE_SUB(NOW(), INTERVAL 5 MINUTE)
+        AND p.reviewRegisteredAt > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
         AND p.reviewRegisteredAt <= NOW()
       ORDER BY p.reviewRegisteredAt DESC
     `);
 
     if (newReviews.length === 0) {
-      console.log('✅ 최근 5분 내 신규 리뷰 없음');
+      console.log('✅ 최근 10분 내 신규 리뷰 없음');
       return;
     }
 
-    console.log(`📝 ${newReviews.length}개의 신규 리뷰 발견 (최근 5분)`);
+    console.log(`📝 ${newReviews.length}개의 신규 리뷰 발견 (최근 10분)`);
 
     // Slack Webhook URL 확인
     const webhookUrl = process.env.SLACK_REVIEW_WEBHOOK_URL;
     
     if (webhookUrl) {
-      // 각 리뷰에 대해 개별 알림 전송
-      for (const review of newReviews) {
-        await sendSlackNotification(webhookUrl, review);
-        // 각 알림 사이에 약간의 딜레이 추가 (Slack rate limit 방지)
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      // 중복 방지: 최근 5분 내 리뷰만 알림 (10분 윈도우에서 필터링)
+      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+      const recentReviews = newReviews.filter(review => 
+        new Date(review.reviewRegisteredAt) > fiveMinutesAgo
+      );
+      
+      if (recentReviews.length > 0) {
+        console.log(`🔄 중복 방지 필터링: ${newReviews.length}개 중 ${recentReviews.length}개 전송`);
+        
+        // 각 리뷰에 대해 개별 알림 전송
+        for (const review of recentReviews) {
+          await sendSlackNotification(webhookUrl, review);
+          // 각 알림 사이에 약간의 딜레이 추가 (Slack rate limit 방지)
+          await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+        console.log(`✅ ${recentReviews.length}개의 개별 Slack 알림 전송 완료`);
+      } else {
+        console.log('🔄 중복 방지: 최근 5분 내 새 리뷰 없음 (알림 생략)');
       }
-      console.log(`✅ ${newReviews.length}개의 개별 Slack 알림 전송 완료`);
     } else {
       console.log('⚠️  SLACK_REVIEW_WEBHOOK_URL 환경변수가 설정되지 않았습니다.');
     }
