@@ -29,4 +29,4 @@ jobs:
         MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         SLACK_REVIEW_WEBHOOK_URL: ${{ secrets.SLACK_REVIEW_WEBHOOK_URL }}
-      run: node review_monitor.js
+      run: node review_monitor_github.js
