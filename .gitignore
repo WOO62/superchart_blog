@@ -4,3 +4,7 @@ dev.env
 *.log
 .DS_Store
 notification_log.json
+review_last_check.json
+SECRETS_*.txt
+*_설정_*.txt
+*_설정_*.md
