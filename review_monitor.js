@@ -42,7 +42,7 @@ async function sendSlackNotification(webhookUrl, review) {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*리뷰 URL:* <${review.review}|보러가기>`
+        text: `*리뷰 URL:* ${review.review}`
       }
     },
     {
