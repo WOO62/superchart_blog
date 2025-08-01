@@ -1,0 +1,6 @@
+node_modules/
+.env
+dev.env
+*.log
+.DS_Store
+notification_log.json

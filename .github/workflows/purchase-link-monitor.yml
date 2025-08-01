@@ -1,0 +1,32 @@
+name: Purchase Link Monitor
+
+on:
+  schedule:
+    # Run every 10 minutes (GitHub Actions minimum is 5 minutes)
+    - cron: '*/10 * * * *'
+  workflow_dispatch: # Allow manual execution
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    
+    - name: Install dependencies
+      run: npm install
+    
+    - name: Run monitoring
+      env:
+        MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
+        MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
+        MYSQL_DATABASE: ${{ secrets.MYSQL_DATABASE }}
+        MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
+        MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+      run: node purchase_link_monitor.js

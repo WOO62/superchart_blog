@@ -1,0 +1,25 @@
+{
+  "name": "superchart_blog",
+  "version": "1.0.0",
+  "main": "check_db_structure.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/WOO62/superchart_blog.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/WOO62/superchart_blog/issues"
+  },
+  "homepage": "https://github.com/WOO62/superchart_blog#readme",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.1",
+    "mysql2": "^3.14.3",
+    "pm2": "^6.0.8"
+  }
+}
