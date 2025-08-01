@@ -29,7 +29,7 @@ async function sendSlackNotification(webhookUrl, review) {
         },
         {
           type: "mrkdwn",
-          text: `*등록 시간:*\n${new Date(review.reviewRegisteredAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`
+          text: `*등록 시간:*\n${new Date(review.reviewRegisteredAt).toLocaleString('ko-KR')}`
         }
       ]
     },
