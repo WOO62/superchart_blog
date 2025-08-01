@@ -89,9 +89,11 @@ async function monitorNewReviews() {
 
     console.log('🔍 신규 리뷰 검증 시작... (GitHub Actions - 최근 5분)');
 
-    // 최근 5분 내 신규 리뷰만 조회
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    console.log(`체크 기준 시간: ${fiveMinutesAgo.toISOString()}`);
+    // 최근 5분 내 신규 리뷰만 조회 (KST 기준으로 조정)
+    const now = new Date();
+    const kstOffset = 9 * 60 * 60 * 1000; // 9시간
+    const fiveMinutesAgo = new Date(now.getTime() + kstOffset - 5 * 60 * 1000);
+    console.log(`체크 기준 시간 (KST): ${fiveMinutesAgo.toISOString()}`);
 
     const [newReviews] = await connection.execute(`
       SELECT 
@@ -109,7 +111,6 @@ async function monitorNewReviews() {
       WHERE p.review IS NOT NULL 
         AND p.review != ''
         AND p.reviewRegisteredAt > ?
-        AND p.reviewRegisteredAt <= NOW()
       ORDER BY p.reviewRegisteredAt DESC
     `, [fiveMinutesAgo]);
 
