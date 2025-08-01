@@ -29,7 +29,7 @@ async function sendSlackNotification(webhookUrl, review) {
         },
         {
           type: "mrkdwn",
-          text: `*등록 시간:*\n${review.reviewRegisteredAt}`
+          text: `*등록 시간:*\n${new Date(review.reviewRegisteredAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`
         }
       ]
     },
@@ -89,9 +89,11 @@ async function monitorNewReviews() {
 
     console.log('🔍 신규 리뷰 검증 시작... (최근 1분)');
 
-    // 최근 1분 내 신규 리뷰만 조회
-    const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
-    console.log(`체크 기준 시간: ${oneMinuteAgo.toISOString()}`);
+    // 최근 1분 내 신규 리뷰만 조회 (KST 기준으로 조정)
+    const now = new Date();
+    const kstOffset = 9 * 60 * 60 * 1000; // 9시간
+    const oneMinuteAgo = new Date(now.getTime() + kstOffset - 1 * 60 * 1000);
+    console.log(`체크 기준 시간 (KST): ${oneMinuteAgo.toISOString()}`);
 
     const [newReviews] = await connection.execute(`
       SELECT 
@@ -109,7 +111,6 @@ async function monitorNewReviews() {
       WHERE p.review IS NOT NULL 
         AND p.review != ''
         AND p.reviewRegisteredAt > ?
-        AND p.reviewRegisteredAt <= NOW()
       ORDER BY p.reviewRegisteredAt DESC
     `, [oneMinuteAgo]);
 
