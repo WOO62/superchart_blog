@@ -111,6 +111,7 @@ async function monitorNewReviews() {
       WHERE p.review IS NOT NULL 
         AND p.review != ''
         AND p.reviewRegisteredAt > ?
+        AND p.reviewRegisteredAt <= NOW()
       ORDER BY p.reviewRegisteredAt DESC
     `, [fiveMinutesAgo]);
 
