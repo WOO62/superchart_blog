@@ -114,7 +114,10 @@ async function monitorPurchaseLinks() {
       port: process.env.MYSQL_PORT || 3306,
       user: process.env.MYSQL_USERNAME,
       password: process.env.MYSQL_PASSWORD,
-      database: process.env.MYSQL_DATABASE
+      database: process.env.MYSQL_DATABASE,
+      ssl: {
+        rejectUnauthorized: false
+      }
     });
 
     console.log('🔍 구매링크 누락 검증 시작...');
