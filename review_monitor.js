@@ -6,8 +6,8 @@ require('dotenv').config({ path: './dev.env' });
 // 마지막 체크 시간을 저장할 파일
 const LAST_CHECK_FILE = path.join(__dirname, 'review_last_check.json');
 
-// Slack Webhook 전송 함수
-async function sendSlackNotification(webhookUrl, reviews) {
+// Slack Webhook 전송 함수 (개별 리뷰용)
+async function sendSlackNotification(webhookUrl, review) {
   const blocks = [
     {
       type: "header",
@@ -18,20 +18,6 @@ async function sendSlackNotification(webhookUrl, reviews) {
       }
     },
     {
-      type: "section",
-      text: {
-        type: "mrkdwn",
-        text: `*${reviews.length}개의 신규 리뷰*가 등록되었습니다.`
-      }
-    },
-    {
-      type: "divider"
-    }
-  ];
-
-  // 각 리뷰에 대한 상세 정보 추가
-  reviews.forEach((review, index) => {
-    blocks.push({
       type: "section",
       fields: [
         {
@@ -51,33 +37,24 @@ async function sendSlackNotification(webhookUrl, reviews) {
           text: `*등록 시간:*\n${new Date(review.reviewRegisteredAt).toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`
         }
       ]
-    });
-    
-    // 리뷰 URL을 별도 섹션으로 추가
-    blocks.push({
+    },
+    {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*리뷰 URL:* <${review.review}|${review.review}>`
+        text: `*리뷰 URL:* <${review.review}|보러가기>`
       }
-    });
-    
-    // 마지막 항목이 아니면 구분선 추가
-    if (index < reviews.length - 1) {
-      blocks.push({ type: "divider" });
+    },
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `Proposition ID: ${review.id}`
+        }
+      ]
     }
-  });
-
-  // 푸터 추가
-  blocks.push({
-    type: "context",
-    elements: [
-      {
-        type: "mrkdwn",
-        text: `알림 시간: ${new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })}`
-      }
-    ]
-  });
+  ];
 
   try {
     const response = await fetch(webhookUrl, {
@@ -168,8 +145,13 @@ async function monitorNewReviews() {
     const webhookUrl = process.env.SLACK_REVIEW_WEBHOOK_URL;
     
     if (webhookUrl) {
-      // 신규 리뷰에 대해 알림 전송
-      await sendSlackNotification(webhookUrl, newReviews);
+      // 각 리뷰에 대해 개별 알림 전송
+      for (const review of newReviews) {
+        await sendSlackNotification(webhookUrl, review);
+        // 각 알림 사이에 약간의 딜레이 추가 (Slack rate limit 방지)
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+      console.log(`✅ ${newReviews.length}개의 개별 Slack 알림 전송 완료`);
       
       // 가장 최근 리뷰의 시간을 마지막 체크 시간으로 저장
       const latestReviewTime = newReviews[0].reviewRegisteredAt;
