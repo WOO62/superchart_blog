@@ -2,8 +2,8 @@ name: Review Monitor
 
 on:
   schedule:
-    # Run every 5 minutes (more frequent for real-time review monitoring)
-    - cron: '*/5 * * * *'
+    # Run every 10 minutes for reliable review monitoring
+    - cron: '*/10 * * * *'
   workflow_dispatch: # Allow manual execution
 
 jobs:

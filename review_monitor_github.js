@@ -133,25 +133,13 @@ async function monitorNewReviews() {
     const webhookUrl = process.env.SLACK_REVIEW_WEBHOOK_URL;
     
     if (webhookUrl) {
-      // 중복 방지: 최근 5분 내 리뷰만 알림 (10분 윈도우에서 필터링)
-      const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
-      const recentReviews = newReviews.filter(review => 
-        new Date(review.reviewRegisteredAt) > fiveMinutesAgo
-      );
-      
-      if (recentReviews.length > 0) {
-        console.log(`🔄 중복 방지 필터링: ${newReviews.length}개 중 ${recentReviews.length}개 전송`);
-        
-        // 각 리뷰에 대해 개별 알림 전송
-        for (const review of recentReviews) {
-          await sendSlackNotification(webhookUrl, review);
-          // 각 알림 사이에 약간의 딜레이 추가 (Slack rate limit 방지)
-          await new Promise(resolve => setTimeout(resolve, 1000));
-        }
-        console.log(`✅ ${recentReviews.length}개의 개별 Slack 알림 전송 완료`);
-      } else {
-        console.log('🔄 중복 방지: 최근 5분 내 새 리뷰 없음 (알림 생략)');
+      // 각 리뷰에 대해 개별 알림 전송 (10분 윈도우 전체)
+      for (const review of newReviews) {
+        await sendSlackNotification(webhookUrl, review);
+        // 각 알림 사이에 약간의 딜레이 추가 (Slack rate limit 방지)
+        await new Promise(resolve => setTimeout(resolve, 1000));
       }
+      console.log(`✅ ${newReviews.length}개의 개별 Slack 알림 전송 완료`);
     } else {
       console.log('⚠️  SLACK_REVIEW_WEBHOOK_URL 환경변수가 설정되지 않았습니다.');
     }
