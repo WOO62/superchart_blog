@@ -8,12 +8,23 @@ const NOTIFICATION_LOG_FILE = path.join(__dirname, 'notification_log.json');
 
 // Slack Webhook 전송 함수
 async function sendSlackNotification(webhookUrl, violations) {
+  // notificationLog 로드하여 재알림 여부 확인
+  const notificationLog = await loadNotificationLog();
+  const reNotifyCount = violations.filter(v => {
+    const key = `${v.id}_${v.campaignId}`;
+    return notificationLog[key] && notificationLog[key].notificationCount > 1;
+  }).length;
+  
+  const headerText = reNotifyCount > 0 
+    ? `🚨 구매링크 누락 알림 (${reNotifyCount}개 미해결)`
+    : "🚨 구매링크 누락 알림";
+    
   const blocks = [
     {
       type: "header",
       text: {
         type: "plain_text",
-        text: "🚨 구매링크 누락 알림",
+        text: headerText,
         emoji: true
       }
     },
@@ -21,7 +32,7 @@ async function sendSlackNotification(webhookUrl, violations) {
       type: "section",
       text: {
         type: "mrkdwn",
-        text: `*${violations.length}개의 구매링크 누락*이 발견되었습니다.`
+        text: `*${violations.length}개의 구매링크 누락*이 발견되었습니다.\n${reNotifyCount > 0 ? `_※ ${reNotifyCount}개는 24시간 이상 미해결된 건입니다._` : ''}`
       }
     },
     {
@@ -31,12 +42,16 @@ async function sendSlackNotification(webhookUrl, violations) {
 
   // 각 누락 건에 대한 상세 정보 추가
   violations.forEach((violation, index) => {
+    const key = `${violation.id}_${violation.campaignId}`;
+    const logEntry = notificationLog[key];
+    const notifyCount = logEntry ? logEntry.notificationCount : 1;
+    
     blocks.push({
       type: "section",
       fields: [
         {
           type: "mrkdwn",
-          text: `*Proposition ID:*\n${violation.id}`
+          text: `*Proposition ID:*\n${violation.id} ${notifyCount > 1 ? `(${notifyCount}차 알림)` : ''}`
         },
         {
           type: "mrkdwn",
@@ -152,31 +167,54 @@ async function monitorPurchaseLinks() {
 
     // 알림 발송 이력 로드
     const notificationLog = await loadNotificationLog();
-    const newViolations = [];
+    const violationsToNotify = [];
+    const now = new Date();
 
-    // 새로운 누락 건만 필터링
+    // 알림 대상 필터링 (새로운 건 + 24시간 경과한 미해결 건)
     for (const violation of violations) {
       const key = `${violation.id}_${violation.campaignId}`;
-      if (!notificationLog[key]) {
-        newViolations.push(violation);
+      const lastNotified = notificationLog[key];
+      
+      if (!lastNotified) {
+        // 새로운 누락 건
+        violationsToNotify.push(violation);
         notificationLog[key] = {
-          notifiedAt: new Date().toISOString(),
+          notifiedAt: now.toISOString(),
+          lastCheckedAt: now.toISOString(),
           propositionId: violation.id,
           campaignId: violation.campaignId,
-          cname: violation.cname
+          cname: violation.cname,
+          notificationCount: 1
         };
+      } else {
+        // 24시간 경과 확인 (재알림 주기)
+        const lastNotifiedTime = new Date(lastNotified.notifiedAt);
+        const hoursSinceLastNotification = (now - lastNotifiedTime) / (1000 * 60 * 60);
+        
+        if (hoursSinceLastNotification >= 24) {
+          violationsToNotify.push(violation);
+          notificationLog[key] = {
+            ...lastNotified,
+            notifiedAt: now.toISOString(),
+            lastCheckedAt: now.toISOString(),
+            notificationCount: (lastNotified.notificationCount || 1) + 1
+          };
+        } else {
+          // 24시간이 안 지났어도 체크 시간은 업데이트
+          notificationLog[key].lastCheckedAt = now.toISOString();
+        }
       }
     }
 
-    if (newViolations.length > 0) {
-      console.log(`📨 ${newViolations.length}개의 새로운 누락 건 발견`);
+    if (violationsToNotify.length > 0) {
+      console.log(`📨 ${violationsToNotify.length}개의 알림 대상 (새로운 건 + 24시간 경과 미해결 건)`);
       
       // Slack Webhook URL 확인
       const webhookUrl = process.env.SLACK_WEBHOOK_URL;
       
       if (webhookUrl) {
         // 새로운 누락 건에 대해서만 알림 전송
-        await sendSlackNotification(webhookUrl, newViolations);
+        await sendSlackNotification(webhookUrl, violationsToNotify);
         
         // 알림 발송 이력 저장
         await saveNotificationLog(notificationLog);
@@ -185,7 +223,7 @@ async function monitorPurchaseLinks() {
         console.log('새로운 누락 건:', newViolations);
       }
     } else {
-      console.log('ℹ️  모든 누락 건은 이미 알림이 발송되었습니다.');
+      console.log('ℹ️  24시간 내 알림이 발송된 건이거나 새로운 누락 건이 없습니다.');
     }
 
     // 전체 누락 현황 요약
