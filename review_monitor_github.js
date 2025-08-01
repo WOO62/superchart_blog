@@ -117,8 +117,8 @@ async function monitorNewReviews() {
       LEFT JOIN Companies comp ON c.companyId = comp.id
       WHERE p.review IS NOT NULL 
         AND p.review != ''
-        AND p.reviewRegisteredAt > DATE_SUB(NOW(), INTERVAL 10 MINUTE)
-        AND p.reviewRegisteredAt <= NOW()
+        AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE)
+        AND p.reviewRegisteredAt <= DATE_ADD(NOW(), INTERVAL 9 HOUR)
       ORDER BY p.reviewRegisteredAt DESC
     `);
 
