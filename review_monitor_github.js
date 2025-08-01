@@ -89,11 +89,18 @@ async function monitorNewReviews() {
 
     console.log('🔍 신규 리뷰 검증 시작... (GitHub Actions - 최근 5분)');
 
-    // 최근 5분 내 신규 리뷰만 조회 (KST 기준으로 조정)
+    // 최근 5분 내 신규 리뷰만 조회
     const now = new Date();
-    const kstOffset = 9 * 60 * 60 * 1000; // 9시간
-    const fiveMinutesAgo = new Date(now.getTime() + kstOffset - 5 * 60 * 1000);
-    console.log(`체크 기준 시간 (KST): ${fiveMinutesAgo.toISOString()}`);
+    const fiveMinutesAgo = new Date(now.getTime() - 5 * 60 * 1000);
+    
+    // KST 형식으로 변환하여 출력
+    const toKSTString = (date) => {
+      const kst = new Date(date.getTime() + 9 * 60 * 60 * 1000);
+      return kst.toISOString().replace('T', ' ').slice(0, 19);
+    };
+    
+    console.log(`체크 기준 시간 (KST): ${toKSTString(fiveMinutesAgo)}`);
+    console.log(`현재 시간 (KST): ${toKSTString(now)}`);
 
     const [newReviews] = await connection.execute(`
       SELECT 
@@ -110,10 +117,10 @@ async function monitorNewReviews() {
       LEFT JOIN Companies comp ON c.companyId = comp.id
       WHERE p.review IS NOT NULL 
         AND p.review != ''
-        AND p.reviewRegisteredAt > ?
-        AND p.reviewRegisteredAt <= NOW()
+        AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 5 MINUTE)
+        AND p.reviewRegisteredAt <= DATE_ADD(NOW(), INTERVAL 9 HOUR)
       ORDER BY p.reviewRegisteredAt DESC
-    `, [fiveMinutesAgo]);
+    `);
 
     if (newReviews.length === 0) {
       console.log('✅ 최근 5분 내 신규 리뷰 없음');
