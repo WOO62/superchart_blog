@@ -1,4 +1,4 @@
-const { monitorNewReviews } = require('./review_monitor');
+const { monitorNewReviews } = require('./review_monitor_simple');
 
 console.log('🚀 리뷰 모니터링 스케줄러 시작');
 console.log(`⏰ 실행 간격: 1분`); // 리뷰는 실시간성이 중요하므로 1분마다 체크

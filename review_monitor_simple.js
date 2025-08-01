@@ -70,7 +70,7 @@ async function sendSlackNotification(webhookUrl, review) {
   }
 }
 
-// GitHub Actions용 신규 리뷰 모니터링 (최근 10분 내 리뷰만)
+// 신규 리뷰 모니터링 (최근 1분 - 로컬용)
 async function monitorNewReviews() {
   let connection;
   
@@ -87,11 +87,11 @@ async function monitorNewReviews() {
       }
     });
 
-    console.log('🔍 신규 리뷰 검증 시작... (GitHub Actions - 최근 5분)');
+    console.log('🔍 신규 리뷰 검증 시작... (최근 1분)');
 
-    // 최근 5분 내 신규 리뷰만 조회
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    console.log(`체크 기준 시간: ${fiveMinutesAgo.toISOString()}`);
+    // 최근 1분 내 신규 리뷰만 조회
+    const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
+    console.log(`체크 기준 시간: ${oneMinuteAgo.toISOString()}`);
 
     const [newReviews] = await connection.execute(`
       SELECT 
@@ -111,14 +111,14 @@ async function monitorNewReviews() {
         AND p.reviewRegisteredAt > ?
         AND p.reviewRegisteredAt <= NOW()
       ORDER BY p.reviewRegisteredAt DESC
-    `, [fiveMinutesAgo]);
+    `, [oneMinuteAgo]);
 
     if (newReviews.length === 0) {
-      console.log('✅ 최근 5분 내 신규 리뷰 없음');
+      console.log('✅ 최근 1분 내 신규 리뷰 없음');
       return;
     }
 
-    console.log(`📝 ${newReviews.length}개의 신규 리뷰 발견 (최근 5분)`);
+    console.log(`📝 ${newReviews.length}개의 신규 리뷰 발견 (최근 1분)`);
 
     // Slack Webhook URL 확인
     const webhookUrl = process.env.SLACK_REVIEW_WEBHOOK_URL;
@@ -134,6 +134,12 @@ async function monitorNewReviews() {
     } else {
       console.log('⚠️  SLACK_REVIEW_WEBHOOK_URL 환경변수가 설정되지 않았습니다.');
     }
+
+    // 신규 리뷰 요약 출력
+    console.log('\n📊 신규 리뷰 요약:');
+    newReviews.forEach(review => {
+      console.log(`  - ${review.cname} (${review.outerId || 'Unknown'}, 담당: ${review.manager || 'N/A'})`);
+    });
 
   } catch (error) {
     console.error('❌ 오류 발생:', error.message);
