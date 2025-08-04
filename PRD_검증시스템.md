@@ -50,7 +50,7 @@
 - [x] **알림 채널**: Slack Webhook 통합 완료 (구매링크/리뷰 별도 채널)
 - [x] **중복 알림 방지**: 
   - 구매링크: 10분마다 모든 누락 건 재알림
-  - 리뷰: ~~시간 기반 필터링으로 중복 방지~~ → **ID 기반 상태 추적으로 완벽한 중복 방지**
+  - 리뷰: **하이브리드 방식** (시간 윈도우 + 처리 ID 목록)
 
 ### 2.4 대시보드
 - **검증 결과 시각화**: 차트와 그래프로 상태 표시
@@ -72,13 +72,14 @@
 - [x] **로컬 스케줄러**: PM2 + setInterval (백업용, 1분마다)
 - [x] **검증 로직**: 
   - purchase_link_monitor.js (구매링크 검증)
-  - ~~review_monitor_github.js~~ → **review_monitor_stateful.js** (Stateful 리뷰 모니터링)
-  - review_monitor_simple.js (리뷰 모니터링 - 로컬용)
+  - **review_monitor_hybrid.js** (하이브리드 리뷰 모니터링 - 메인)
+  - review_monitor_stateful.js (ID 기반 - deprecated)
+  - review_monitor_simple.js (로컬 백업용)
 - [x] **상태 관리**: 
   - 구매링크: 중복 체크 제거 (매번 전체 알림)
-  - 리뷰: **GitHub Gist 기반 ID 추적** (완벽한 중복 방지)
+  - 리뷰: **하이브리드 방식** (시간 윈도우 + 처리 ID 목록)
 - [x] **타임존 처리**: MySQL NOW() + 9시간으로 KST 보정
-- [x] **외부 저장소**: GitHub Gist API (상태 영구 보존)
+- [x] **외부 저장소**: GitHub Gist API (처리 ID 목록 7일간 보존)
 
 ### 3.3 알림
 - **이메일**: Nodemailer
@@ -160,7 +161,7 @@ WHERE cc.purchaseLink IS NOT NULL
   AND p.createdAt >= DATE_SUB(NOW(), INTERVAL 2 MONTH)
 ORDER BY p.id DESC;
 
--- [구현완료] 신규 리뷰 등록 감지 (Stateful)
+-- [구현완료] 신규 리뷰 등록 감지 (Hybrid)
 SELECT 
   p.id,
   p.cname,
@@ -175,11 +176,11 @@ LEFT JOIN Campaigns c ON p.campaignId = c.id
 LEFT JOIN Companies comp ON c.companyId = comp.id
 WHERE p.review IS NOT NULL 
   AND p.review != ''
-  AND p.id > ? -- 마지막 처리 ID (GitHub Gist에서 가져옴)
-  -- 1시간 안전 윈도우 (누락 방지)
-  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 1 HOUR)
+  -- 2시간 윈도우로 모든 최근 리뷰 조회
+  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 2 HOUR)
   AND p.reviewRegisteredAt <= DATE_ADD(NOW(), INTERVAL 9 HOUR)
-ORDER BY p.id ASC;
+ORDER BY p.reviewRegisteredAt ASC;
+-- 이후 애플리케이션에서 처리된 ID 목록과 비교하여 필터링
 
 -- 광고 필수 필드 NULL 체크
 SELECT COUNT(*) FROM Ads WHERE name IS NULL OR companyId IS NULL;
@@ -248,12 +249,13 @@ AND NOT EXISTS (
 ### Phase 5: 리뷰 모니터링 시스템 ✅ 완료
 - [x] 신규 리뷰 실시간 감지
 - [x] 캠페인명, 블로거 ID, 매니저명 포함
-- [x] ~~시간 기반 중복 방지~~ → **ID 기반 상태 추적 시스템**
+- [x] ~~시간 기반 중복 방지~~ → ~~ID 기반 상태 추적~~ → **하이브리드 방식**
 - [x] 타임존 이슈 해결 (MySQL NOW() + 9시간 보정)
 - [x] GitHub Actions 실행 안정성 개선
-- [x] **GitHub Gist 통합** (상태 영구 저장)
-- [x] **완벽한 중복 방지** (ID 기반)
-- [x] **누락 방지** (1시간 안전 윈도우)
+- [x] **GitHub Gist 통합** (처리 ID 목록 저장)
+- [x] **완벽한 중복 방지** (처리 ID 목록 비교)
+- [x] **누락 방지** (2시간 윈도우 + ID 목록)
+- [x] **ID 순서 문제 해결** (ID ≠ 시간순)
 
 ### Phase 6: 확장 가능한 검증 항목 (예정)
 - [ ] 다른 데이터 무결성 검증 추가
@@ -272,22 +274,27 @@ AND NOT EXISTS (
   - responsedAt이 NOT NULL인 경우만
 - **알림**: 모든 누락 건을 10분마다 Slack으로 전송 (중복 체크 없음)
 
-### 7.2 리뷰 등록 모니터링 (Stateful 시스템)
+### 7.2 리뷰 등록 모니터링 (Hybrid 시스템)
 - **파일**: 
-  - **review_monitor_stateful.js** (메인 - GitHub Gist 연동)
+  - **review_monitor_hybrid.js** (메인 - 하이브리드 방식)
+  - review_monitor_stateful.js (deprecated - ID 순서 문제)
   - review_monitor_simple.js (로컬 백업용)
 - **실행 주기**: 
   - GitHub Actions: 5분마다 설정 (cron: `*/5 * * * *`)
   - 실제 실행: 5-20분 불규칙 (GitHub 부하에 따라)
 - **상태 관리**:
-  - **GitHub Gist**: 마지막 처리 ID 영구 저장
+  - **GitHub Gist**: 처리된 ID 목록 저장 (7일간 유지)
   - **Gist ID**: d5885e45802bdba05f3152f410753cff
   - **인증**: Personal Access Token (gist 권한)
-- **검증 조건**:
-  - Propositions.review가 NOT NULL
-  - **p.id > lastProcessedId** (Gist에서 가져옴)
-  - 1시간 안전 윈도우 (누락 방지)
-  - MySQL NOW() + 9시간으로 KST 보정
+- **검증 방식 (하이브리드)**:
+  1. 최근 2시간 내 모든 리뷰 조회
+  2. Gist에서 처리된 ID 목록 가져오기
+  3. 처리되지 않은 ID만 필터링
+  4. 알림 전송 후 처리 ID 목록 업데이트
+- **핵심 개선사항**:
+  - **ID 순서 문제 해결**: Propositions ID는 생성순이지 리뷰 등록순이 아님
+  - **완벽한 누락 방지**: 시간 윈도우 + ID 목록 조합
+  - **메모리 최적화**: 7일 이상 된 ID는 자동 삭제
 - **알림 내용**:
   - 캠페인명 (cname)
   - 블로거 ID (Users.outerId)
@@ -334,9 +341,10 @@ AND NOT EXISTS (
 ### 10.3 중복 알림 방지 ✅ 완벽 해결
 - **구매링크**: 중복 체크 제거, 매번 전체 알림
 - **리뷰**: 
-  - ~~시간 윈도우 기반~~ → **ID 기반 상태 추적**
-  - GitHub Gist에 영구 저장
+  - ~~시간 윈도우 기반~~ → ~~ID 기반 상태 추적~~ → **하이브리드 방식**
+  - GitHub Gist에 처리 ID 목록 저장
   - 서버 재시작해도 상태 유지
+  - 7일 이상 된 ID는 자동 정리
 
 ### 10.4 GitHub Actions vs 로컬 환경
 - **차이점**: GitHub Actions 환경에서도 MySQL 연결 시 동일한 타임존 이슈 발생
@@ -349,21 +357,33 @@ AND NOT EXISTS (
   - `GITHUB_GIST_ID` → `GIST_ID`
   - `GITHUB_TOKEN` → `GH_TOKEN`
 
-## 11. Stateful 시스템 아키텍처
+### 10.6 ID 순서 문제 ✅ 해결
+- **문제**: Propositions 테이블의 ID는 레코드 생성 순서
+- **현상**: ID가 작은 리뷰가 나중에 등록되는 경우 발생
+  - 예: ID 10002933 처리 후, ID 10002443이 나중에 리뷰 등록
+- **기존 방식의 한계**: `p.id > lastProcessedId`로는 놓치는 리뷰 발생
+- **해결**: **하이브리드 방식 구현**
+  - 시간 윈도우(2시간)로 최근 리뷰 모두 조회
+  - 처리된 ID 목록과 비교하여 필터링
+  - 완벽한 중복 방지 + 누락 방지
+
+## 11. 하이브리드 시스템 아키텍처
 
 ### 11.1 시스템 구성도
 ```
 ┌─────────────────┐     ┌──────────────┐     ┌─────────────┐
-│ GitHub Actions  │────▶│ Stateful     │────▶│   MySQL     │
-│  (5분마다)      │     │  Monitor     │     │  Database   │
+│ GitHub Actions  │────▶│   Hybrid     │────▶│   MySQL     │
+│  (5분마다)      │     │   Monitor    │     │  Database   │
 └─────────────────┘     └──────────────┘     └─────────────┘
                                │
-                               ▼
-                        ┌──────────────┐
-                        │ GitHub Gist  │
-                        │ (상태 저장)   │
-                        └──────────────┘
-                               │
+                        ┌──────┴──────┐
+                        ▼             ▼
+                ┌──────────────┐ ┌──────────────┐
+                │ 시간 윈도우   │ │ GitHub Gist  │
+                │  (2시간)     │ │ (ID 목록)    │
+                └──────────────┘ └──────────────┘
+                        │             │
+                        └──────┬──────┘
                                ▼
                         ┌──────────────┐
                         │    Slack     │
@@ -371,9 +391,240 @@ AND NOT EXISTS (
                         └──────────────┘
 ```
 
-### 11.2 핵심 장점
-1. **완벽한 중복 방지**: ID 기반 추적으로 같은 리뷰 재알림 없음
-2. **누락 방지**: 1시간 안전 윈도우 + ID 추적
-3. **영구 상태 보존**: GitHub Gist에 저장되어 재시작 후에도 유지
-4. **실행 간격 독립성**: 불규칙한 실행에도 안정적 작동
-5. **확장성**: 다른 모니터링 시스템에도 동일 패턴 적용 가능
+### 11.2 하이브리드 방식 작동 원리
+```
+1. 시간 윈도우 조회 (2시간)
+   └─> 최근 등록된 모든 리뷰 가져오기
+
+2. Gist에서 처리 ID 목록 읽기
+   └─> Set 자료구조로 빠른 조회
+
+3. 필터링
+   └─> 처리되지 않은 ID만 선별
+
+4. 알림 전송
+   └─> Slack으로 개별 알림
+
+5. 상태 업데이트
+   └─> 처리 ID 목록에 추가
+   └─> Gist에 저장 (7일간 유지)
+```
+
+### 11.3 핵심 장점
+1. **ID 순서 독립성**: ID가 시간순이 아니어도 정확히 감지
+2. **완벽한 중복 방지**: 처리 ID 목록으로 중복 제거
+3. **누락 방지**: 2시간 윈도우로 충분한 여유 확보
+4. **메모리 효율성**: 7일 이상 된 ID 자동 삭제
+5. **실행 간격 독립성**: 불규칙한 실행에도 안정적 작동
+6. **영구 상태 보존**: GitHub Gist에 저장되어 재시작 후에도 유지
+
+## 12. 로컬/GitHub Actions 하이브리드 실행
+
+### 12.1 실행 방식
+- **로컬 실행**: 컴퓨터 켜져 있을 때 우선 실행 (2분 간격)
+- **GitHub Actions**: 백업용 (5-20분 불규칙 실행)
+- **중복 방지**: GitHub Gist 공유로 상태 동기화
+
+### 12.2 로컬 모니터링
+- **파일**: local_monitor.js
+- **실행 주기**: 2분 (setInterval)
+- **상태 관리**: GitHub Gist와 동기화
+- **장점**: 빠른 응답, 안정적 주기
+
+## 13. 슈퍼차트 대시보드 시스템
+
+### 13.1 프로젝트 개요
+- **프로젝트명**: 슈퍼차트 대시보드 (superchart-dashboard)
+- **목적**: 실시간 매출 현황 및 리뷰 모니터링 대시보드
+- **기술 스택**: Next.js 14, TypeScript, Tailwind CSS
+- **배포**: Vercel (준비 완료)
+
+### 13.2 주요 기능
+
+#### 13.2.1 대시보드 메인
+- **월 매출 카드**: 현재 월 총 매출 표시
+- **누적 매출 카드**: 전체 기간 누적 매출
+- **슈퍼차트 매출 카드**: 슈퍼차트 전용 매출 통계
+- **매출 차트**: 
+  - 일별/월별 매출 트렌드 그래프
+  - 선택 가능한 기간 필터 (7일, 30일, 90일, 1년)
+- **상품별 매출**: 상품 카테고리별 매출 분포
+
+#### 13.2.2 리뷰 모니터링
+- **실시간 통계**:
+  - 오늘 등록된 리뷰 수
+  - 이번 주 리뷰 수
+  - 이번 달 리뷰 수
+  - 전체 리뷰 수
+- **최근 리뷰 목록**: 
+  - 캠페인명
+  - 블로거 ID
+  - 매니저
+  - 등록 시간
+  - 리뷰 URL 링크
+- **자동 새로고침**: 30초마다 데이터 업데이트
+
+#### 13.2.3 사이드바 네비게이션
+- **확장형 사이드바**: 
+  - 기본 60px 너비
+  - 호버 시 240px로 확장
+  - 부드러운 애니메이션 전환
+- **메뉴 구성**:
+  - 대시보드 (홈)
+  - 리뷰 모니터링
+  - 설정 (예정)
+- **브랜드 컬러**: #F21A0D (슈퍼차트 레드)
+
+### 13.3 기술 구현
+
+#### 13.3.1 프론트엔드
+- **프레임워크**: Next.js 14 (App Router)
+- **스타일링**: Tailwind CSS v3
+- **차트**: Recharts
+- **아이콘**: Lucide React
+- **타입스크립트**: 완전한 타입 안정성
+
+#### 13.3.2 백엔드
+- **API Routes**: Next.js API 라우트
+- **데이터베이스**: 
+  - MySQL (기존 데이터 읽기 전용)
+  - Supabase (실시간 기능용 - 예정)
+- **연결 풀**: mysql2/promise
+- **환경변수**: .env.local (dev.env와 동일)
+
+#### 13.3.3 파일 구조
+```
+superchart-dashboard/
+├── app/
+│   ├── layout.tsx           # 루트 레이아웃
+│   ├── page.tsx             # 메인 대시보드
+│   ├── globals.css          # 전역 스타일
+│   ├── api/
+│   │   ├── sales/
+│   │   │   └── route.ts     # 매출 데이터 API
+│   │   └── reviews/
+│   │       └── route.ts     # 리뷰 데이터 API
+│   └── reviews/
+│       └── page.tsx         # 리뷰 모니터링 페이지
+├── components/
+│   ├── layout/
+│   │   └── Sidebar.tsx      # 사이드바 컴포넌트
+│   ├── dashboard/
+│   │   ├── SalesCard.tsx    # 매출 카드
+│   │   └── SalesChart.tsx   # 매출 차트
+│   └── reviews/
+│       ├── ReviewStats.tsx  # 리뷰 통계
+│       └── ReviewList.tsx   # 리뷰 목록
+├── lib/
+│   ├── db.ts               # MySQL 연결
+│   ├── supabase.ts         # Supabase 클라이언트
+│   └── utils.ts            # 유틸리티 함수
+├── public/                 # 정적 파일
+├── package.json            # 의존성
+├── next.config.js          # Next.js 설정
+├── tailwind.config.js      # Tailwind 설정
+├── tsconfig.json           # TypeScript 설정
+└── .env.local             # 환경변수
+```
+
+### 13.4 설치 및 실행
+
+#### 13.4.1 의존성 설치
+```bash
+cd superchart-dashboard
+npm install
+```
+
+#### 13.4.2 환경변수 설정
+`.env.local` 파일에 다음 변수 설정:
+- MySQL 연결 정보
+- Slack Webhook URL
+- GitHub Gist 설정
+- Supabase 키
+
+#### 13.4.3 개발 서버 실행
+```bash
+npm run dev
+```
+http://localhost:3000 에서 확인
+
+#### 13.4.4 프로덕션 빌드
+```bash
+npm run build
+npm run start
+```
+
+### 13.5 해결된 이슈
+
+#### 13.5.1 Tailwind CSS v4 호환성
+- **문제**: v4 알파 버전의 불안정성
+- **해결**: v3로 다운그레이드 (`npm install tailwindcss@3`)
+
+#### 13.5.2 CSS 클래스 오류
+- **문제**: `border-border` 클래스 미존재
+- **해결**: 표준 Tailwind 클래스로 교체 (`border-gray-200`)
+
+#### 13.5.3 Next.js 설정 오류
+- **문제**: swcMinify 옵션 deprecated
+- **해결**: next.config.js에서 옵션 제거
+
+### 13.6 상위노출 대시보드 기능 개선
+
+#### 13.6.1 데이터 관리 개선
+- [x] **키워드 데이터 소스 변경**: ChannelCampaigns.requiredKeywords에서 가져오기
+- [x] **컬럼 분리**: 업체명(company_name)과 캠페인명(campaign_name) 별도 표시
+- [x] **블로거 ID 표시**: 별도 컬럼으로 추가
+- [x] **키워드 포맷팅**: JSON 배열 특수문자([,",]) 자동 제거
+
+#### 13.6.2 검색 및 필터링
+- [x] **통합 검색 기능**:
+  - 업체명, 캠페인명, 블로거 ID, 키워드로 검색
+  - 실시간 검색 (엔터키 또는 검색 버튼)
+  - 검색 아이콘 포함된 UI
+
+- [x] **다중 필터링**:
+  - 매니저별 필터 (드롭다운, 자동 목록 생성)
+  - 성공 여부 필터 (대기/성공/실패)
+  - 날짜 범위 필터 (시작/종료 날짜)
+  - 필터 토글 버튼 (표시/숨김)
+  - 필터 초기화 기능
+
+#### 13.6.3 UI/UX 개선
+- [x] **개선된 페이지네이션**:
+  - 숫자 페이지 버튼 (1,2,3,4,5 형식)
+  - 현재 페이지 강조 (브랜드 컬러)
+  - 스마트 페이징 (첫/마지막 페이지 표시, ... 생략 표시)
+  - 이전/다음 화살표 버튼
+
+- [x] **인라인 편집 개선**:
+  - 셀 클릭으로 즉시 편집 모드
+  - 개별 셀만 편집 (다중 편집 방지)
+  - Enter로 저장, ESC로 취소
+  - 포커스 아웃 시 자동 저장
+  - 편집 중인 셀 시각적 피드백
+
+- [x] **데이터 표시 개선**:
+  - 한 페이지 50개 항목 표시
+  - 최신 리뷰 자동 상단 정렬
+  - 실시간 데이터 업데이트 (새 리뷰 추가 시)
+
+#### 13.6.4 데이터 연동
+- [x] **Supabase 통합**:
+  - exposure_tracking 테이블 생성 및 관리
+  - 실시간 구독으로 자동 업데이트
+  - RLS 정책 적용 (읽기: 공개, 수정: 인증 필요)
+
+- [x] **자동 데이터 동기화**:
+  - review_monitor_hybrid.js에서 자동 저장
+  - MySQL → Supabase 실시간 동기화
+  - 중복 방지 (proposition_id unique constraint)
+
+### 13.7 향후 계획
+- [ ] Vercel 배포 자동화
+- [ ] 사용자 인증 시스템
+- [ ] 엑셀 내보내기 기능
+- [ ] 대량 편집 기능
+- [ ] 고급 필터 (다중 키워드, 정규식)
+- [ ] 통계 대시보드 추가
+- [ ] 모바일 최적화 강화
+- [ ] 다크 모드 지원

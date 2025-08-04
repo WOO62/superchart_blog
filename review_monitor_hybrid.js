@@ -1,9 +1,15 @@
 const mysql = require('mysql2/promise');
+const { createClient } = require('@supabase/supabase-js');
 require('dotenv').config({ path: './dev.env' });
 
 // GitHub Gist 설정
 const GIST_ID = process.env.GIST_ID;
 const GITHUB_TOKEN = process.env.GH_TOKEN;
+
+// Supabase 설정
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Gist에서 상태 읽기
 async function getProcessedState() {
@@ -90,6 +96,49 @@ async function saveProcessedState(state) {
     return true;
   } catch (error) {
     console.error('❌ Gist 저장 오류:', error.message);
+    return false;
+  }
+}
+
+// Supabase에 데이터 저장
+async function saveToSupabase(review) {
+  try {
+    // 데이터 준비
+    const dataToSave = {
+      proposition_id: review.id,
+      campaign_name: review.cname,
+      manager: review.manager || null,
+      company_name: review.companyName || null,
+      keywords: review.keywords || null,
+      post_link: review.review,
+      blogger_id: review.outerId || null,
+      review_registered_at: review.reviewRegisteredAt,
+      success_status: 'pending'
+    };
+    
+    console.log(`📤 Supabase 저장 시도 - ID: ${review.id}, 캠페인: ${review.cname}`);
+    
+    const { data, error } = await supabase
+      .from('exposure_tracking')
+      .upsert(dataToSave, {
+        onConflict: 'proposition_id'
+      });
+
+    if (error) {
+      console.error('❌ Supabase 저장 실패 - ID:', review.id);
+      console.error('   에러 코드:', error.code);
+      console.error('   에러 메시지:', error.message);
+      console.error('   에러 상세:', error.details);
+      console.error('   에러 힌트:', error.hint);
+      return false;
+    }
+
+    console.log(`✅ Supabase 저장 성공 - ID: ${review.id}`);
+    return true;
+  } catch (error) {
+    console.error('❌ Supabase 저장 예외 발생 - ID:', review.id);
+    console.error('   예외 메시지:', error.message);
+    console.error('   예외 스택:', error.stack);
     return false;
   }
 }
@@ -202,10 +251,13 @@ async function monitorNewReviews() {
         p.reviewRegisteredAt,
         p.uid,
         u.outerId,
-        comp.manager
+        comp.manager,
+        comp.name as companyName,
+        cc.requiredKeywords as keywords
       FROM Propositions p
       LEFT JOIN Users u ON p.uid = u.uid
-      LEFT JOIN Campaigns c ON p.campaignId = c.id
+      LEFT JOIN ChannelCampaigns cc ON p.campaignId = cc.campaignId
+      LEFT JOIN Campaigns c ON cc.campaignId = c.id
       LEFT JOIN Companies comp ON c.companyId = comp.id
       WHERE p.review IS NOT NULL 
         AND p.review != ''
@@ -234,14 +286,37 @@ async function monitorNewReviews() {
       const newProcessedIds = [];
       
       for (const review of unprocessedReviews) {
+        // Slack 알림 전송
         await sendSlackNotification(webhookUrl, review);
+        
+        // Supabase에 저장 (실패 시 재시도)
+        let saveSuccess = await saveToSupabase(review);
+        
+        if (!saveSuccess) {
+          console.log(`⚠️  ID ${review.id} Supabase 저장 실패, 재시도 중...`);
+          // 2초 대기 후 재시도
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          saveSuccess = await saveToSupabase(review);
+          
+          if (!saveSuccess) {
+            console.error(`❌ ID ${review.id} Supabase 저장 최종 실패!`);
+            console.error(`   캠페인: ${review.cname}`);
+            console.error(`   URL: ${review.review}`);
+            // 저장 실패해도 계속 진행하되, 로그에 명확히 기록
+          } else {
+            console.log(`✅ ID ${review.id} 재시도 성공`);
+          }
+        }
+        
         successCount++;
         
-        // 처리된 ID 기록
+        // 처리된 ID 기록 (Supabase 저장 성공 여부와 관계없이)
+        // 이렇게 하면 중복 알림은 방지하면서 실패한 건은 로그로 추적 가능
         newProcessedIds.push({
           id: review.id,
           time: new Date().toISOString(),
-          registeredAt: review.reviewRegisteredAt
+          registeredAt: review.reviewRegisteredAt,
+          supabaseSaved: saveSuccess // 저장 성공 여부 기록
         });
         
         // Slack rate limit 방지
