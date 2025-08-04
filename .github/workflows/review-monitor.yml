@@ -31,4 +31,7 @@ jobs:
         SLACK_REVIEW_WEBHOOK_URL: ${{ secrets.SLACK_REVIEW_WEBHOOK_URL }}
         GIST_ID: ${{ secrets.GIST_ID }}
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+        SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        NODE_ENV: production
       run: node review_monitor_hybrid.js

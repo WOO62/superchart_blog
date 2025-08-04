@@ -1,10 +1,33 @@
 const mysql = require('mysql2/promise');
 const { createClient } = require('@supabase/supabase-js');
-require('dotenv').config({ path: './dev.env' });
+
+// GitHub Actions에서는 환경변수가 직접 제공되므로 dotenv는 조건부로만 사용
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: './dev.env' });
+}
 
 // GitHub Gist 설정
 const GIST_ID = process.env.GIST_ID;
 const GITHUB_TOKEN = process.env.GH_TOKEN;
+
+// 필수 환경변수 검증
+const requiredEnvVars = [
+  'MYSQL_HOST',
+  'MYSQL_USERNAME', 
+  'MYSQL_PASSWORD',
+  'MYSQL_DATABASE',
+  'GIST_ID',
+  'GH_TOKEN',
+  'NEXT_PUBLIC_SUPABASE_URL',
+  'SUPABASE_SERVICE_ROLE_KEY'
+];
+
+for (const envVar of requiredEnvVars) {
+  if (!process.env[envVar]) {
+    console.error(`❌ 필수 환경변수가 설정되지 않았습니다: ${envVar}`);
+    process.exit(1);
+  }
+}
 
 // Supabase 설정
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -337,6 +360,8 @@ async function monitorNewReviews() {
 
   } catch (error) {
     console.error('❌ 오류 발생:', error.message);
+    console.error('❌ 스택 트레이스:', error.stack);
+    process.exit(1);
   } finally {
     if (connection) {
       await connection.end();
@@ -346,7 +371,15 @@ async function monitorNewReviews() {
 
 // 스크립트 실행
 if (require.main === module) {
-  monitorNewReviews();
+  monitorNewReviews()
+    .then(() => {
+      console.log('✅ 모니터링 완료');
+      process.exit(0);
+    })
+    .catch((error) => {
+      console.error('❌ 치명적 오류:', error.message);
+      process.exit(1);
+    });
 }
 
 module.exports = { monitorNewReviews };
