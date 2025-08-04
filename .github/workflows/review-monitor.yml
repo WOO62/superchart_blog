@@ -2,8 +2,8 @@ name: Review Monitor
 
 on:
   schedule:
-    # Run every 10 minutes for reliable review monitoring
-    - cron: '*/10 * * * *'
+    # Run every 5 minutes (minimum interval) with stateful tracking
+    - cron: '*/5 * * * *'
   workflow_dispatch: # Allow manual execution
 
 jobs:
@@ -21,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: npm install
     
-    - name: Run review monitoring
+    - name: Run review monitoring (stateful)
       env:
         MYSQL_HOST: ${{ secrets.MYSQL_HOST }}
         MYSQL_PORT: ${{ secrets.MYSQL_PORT }}
@@ -29,4 +29,6 @@ jobs:
         MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
         MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         SLACK_REVIEW_WEBHOOK_URL: ${{ secrets.SLACK_REVIEW_WEBHOOK_URL }}
-      run: node review_monitor_github.js
+        GIST_ID: ${{ secrets.GIST_ID }}
+        GH_TOKEN: ${{ secrets.GH_TOKEN }}
+      run: node review_monitor_stateful.js

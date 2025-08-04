@@ -8,3 +8,4 @@ review_last_check.json
 SECRETS_*.txt
 *_설정_*.txt
 *_설정_*.md
+stateful_setup_guide.md

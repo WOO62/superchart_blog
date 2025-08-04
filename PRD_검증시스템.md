@@ -68,7 +68,7 @@
 ### 3.2 검증 엔진
 - [x] **스케줄러**: 
   - 구매링크: GitHub Actions (10분마다)
-  - 리뷰: GitHub Actions (5분마다)
+  - 리뷰: GitHub Actions (10분마다)
 - [x] **로컬 스케줄러**: PM2 + setInterval (백업용, 1분마다)
 - [x] **검증 로직**: 
   - purchase_link_monitor.js (구매링크 검증)
@@ -76,7 +76,8 @@
   - review_monitor_simple.js (리뷰 모니터링 - 로컬용)
 - [x] **상태 관리**: 
   - 구매링크: 중복 체크 제거 (매번 전체 알림)
-  - 리뷰: 시간 윈도우 기반 (5분/1분)
+  - 리뷰: 시간 윈도우 기반 (10분/1분)
+- [x] **타임존 처리**: MySQL NOW() + 9시간으로 KST 보정
 
 ### 3.3 알림
 - **이메일**: Nodemailer
@@ -173,8 +174,8 @@ LEFT JOIN Campaigns c ON p.campaignId = c.id
 LEFT JOIN Companies comp ON c.companyId = comp.id
 WHERE p.review IS NOT NULL 
   AND p.review != ''
-  -- UTC to KST 변환 필요
-  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 5 MINUTE)
+  -- MySQL NOW() + 9시간으로 KST 보정
+  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE)
   AND p.reviewRegisteredAt <= DATE_ADD(NOW(), INTERVAL 9 HOUR)
 ORDER BY p.reviewRegisteredAt DESC;
 
@@ -239,14 +240,15 @@ AND NOT EXISTS (
 ### Phase 4: 자동화 시스템 구축 ✅ 완료
 - [x] GitHub Actions 24/7 모니터링 설정
 - [x] 구매링크: 10분마다 자동 실행
-- [x] 리뷰: 5분마다 자동 실행
+- [x] 리뷰: 10분마다 자동 실행 (GitHub Actions 안정성 고려)
 - [x] PM2 로컬 백업 옵션
 
 ### Phase 5: 리뷰 모니터링 시스템 ✅ 완료
 - [x] 신규 리뷰 실시간 감지
 - [x] 캠페인명, 블로거 ID, 매니저명 포함
-- [x] 시간 기반 중복 방지 (5분/1분 윈도우)
-- [x] 타임존 이슈 해결 (UTC/KST)
+- [x] 시간 기반 중복 방지 (10분/1분 윈도우)
+- [x] 타임존 이슈 해결 (MySQL NOW() + 9시간 보정)
+- [x] GitHub Actions 실행 안정성 개선
 
 ### Phase 6: 확장 가능한 검증 항목 (예정)
 - [ ] 다른 데이터 무결성 검증 추가
@@ -267,15 +269,15 @@ AND NOT EXISTS (
 
 ### 7.2 리뷰 등록 모니터링
 - **파일**: 
-  - review_monitor_github.js (GitHub Actions용 - 5분 윈도우)
+  - review_monitor_github.js (GitHub Actions용 - 10분 윈도우)
   - review_monitor_simple.js (로컬용 - 1분 윈도우)
 - **실행 주기**: 
-  - GitHub Actions: 5분마다
+  - GitHub Actions: 10분마다 (cron: `*/10 * * * *`)
   - 로컬: 1분마다
 - **검증 조건**:
   - Propositions.review가 NOT NULL
   - reviewRegisteredAt이 체크 시간 윈도우 내
-  - 타임존 보정: DB UTC + 9시간 = KST
+  - **중요**: MySQL NOW() + 9시간으로 KST 보정 필요
 - **알림 내용**:
   - 캠페인명 (cname)
   - 블로거 ID (Users.outerId)
@@ -304,14 +306,22 @@ AND NOT EXISTS (
 - 자동 복구 기능
 
 ## 10. 알려진 이슈 및 해결사항
-### 10.1 타임존 이슈
-- **문제**: DB는 UTC, reviewRegisteredAt은 KST로 저장
-- **해결**: SQL 쿼리에서 NOW()에 9시간 추가하여 비교
+### 10.1 타임존 이슈 ✅ 해결
+- **문제**: MySQL NOW()가 9시간 뒤쳐짐 (UTC vs KST)
+- **현상**: reviewRegisteredAt은 KST로 저장되지만 MySQL NOW()는 UTC 기준
+- **해결**: SQL 쿼리에서 `DATE_ADD(NOW(), INTERVAL 9 HOUR)`로 KST 보정
 
-### 10.2 중복 알림 방지
+### 10.2 GitHub Actions 불규칙 실행 ✅ 해결
+- **문제**: cron이 정확히 5분마다 실행되지 않음 (5-10분 간격 불규칙)
+- **해결**: 
+  - cron을 10분 간격으로 변경 (`*/10 * * * *`)
+  - 체크 윈도우를 10분으로 확대
+  - 리뷰 누락 방지
+
+### 10.3 중복 알림 방지
 - **구매링크**: 중복 체크 제거, 매번 전체 알림
-- **리뷰**: 시간 윈도우 기반 필터링 (5분/1분)
+- **리뷰**: 시간 윈도우 기반 필터링 (10분/1분)
 
-### 10.3 GitHub Actions 제한
-- **최소 실행 간격**: 5분
-- **해결**: 로컬 백업 스케줄러 1분 간격 실행
+### 10.4 GitHub Actions vs 로컬 환경
+- **차이점**: GitHub Actions 환경에서도 MySQL 연결 시 동일한 타임존 이슈 발생
+- **해결**: 모든 환경에서 동일한 9시간 보정 로직 적용
