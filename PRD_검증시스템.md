@@ -50,7 +50,7 @@
 - [x] **알림 채널**: Slack Webhook 통합 완료 (구매링크/리뷰 별도 채널)
 - [x] **중복 알림 방지**: 
   - 구매링크: 10분마다 모든 누락 건 재알림
-  - 리뷰: 시간 기반 필터링으로 중복 방지
+  - 리뷰: ~~시간 기반 필터링으로 중복 방지~~ → **ID 기반 상태 추적으로 완벽한 중복 방지**
 
 ### 2.4 대시보드
 - **검증 결과 시각화**: 차트와 그래프로 상태 표시
@@ -68,16 +68,17 @@
 ### 3.2 검증 엔진
 - [x] **스케줄러**: 
   - 구매링크: GitHub Actions (10분마다)
-  - 리뷰: GitHub Actions (10분마다)
+  - 리뷰: GitHub Actions (5분마다 설정, 실제 5-20분 불규칙 실행)
 - [x] **로컬 스케줄러**: PM2 + setInterval (백업용, 1분마다)
 - [x] **검증 로직**: 
   - purchase_link_monitor.js (구매링크 검증)
-  - review_monitor_github.js (리뷰 모니터링 - GitHub Actions용)
+  - ~~review_monitor_github.js~~ → **review_monitor_stateful.js** (Stateful 리뷰 모니터링)
   - review_monitor_simple.js (리뷰 모니터링 - 로컬용)
 - [x] **상태 관리**: 
   - 구매링크: 중복 체크 제거 (매번 전체 알림)
-  - 리뷰: 시간 윈도우 기반 (10분/1분)
+  - 리뷰: **GitHub Gist 기반 ID 추적** (완벽한 중복 방지)
 - [x] **타임존 처리**: MySQL NOW() + 9시간으로 KST 보정
+- [x] **외부 저장소**: GitHub Gist API (상태 영구 보존)
 
 ### 3.3 알림
 - **이메일**: Nodemailer
@@ -159,7 +160,7 @@ WHERE cc.purchaseLink IS NOT NULL
   AND p.createdAt >= DATE_SUB(NOW(), INTERVAL 2 MONTH)
 ORDER BY p.id DESC;
 
--- [구현완료] 신규 리뷰 등록 감지
+-- [구현완료] 신규 리뷰 등록 감지 (Stateful)
 SELECT 
   p.id,
   p.cname,
@@ -174,10 +175,11 @@ LEFT JOIN Campaigns c ON p.campaignId = c.id
 LEFT JOIN Companies comp ON c.companyId = comp.id
 WHERE p.review IS NOT NULL 
   AND p.review != ''
-  -- MySQL NOW() + 9시간으로 KST 보정
-  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 10 MINUTE)
+  AND p.id > ? -- 마지막 처리 ID (GitHub Gist에서 가져옴)
+  -- 1시간 안전 윈도우 (누락 방지)
+  AND p.reviewRegisteredAt > DATE_SUB(DATE_ADD(NOW(), INTERVAL 9 HOUR), INTERVAL 1 HOUR)
   AND p.reviewRegisteredAt <= DATE_ADD(NOW(), INTERVAL 9 HOUR)
-ORDER BY p.reviewRegisteredAt DESC;
+ORDER BY p.id ASC;
 
 -- 광고 필수 필드 NULL 체크
 SELECT COUNT(*) FROM Ads WHERE name IS NULL OR companyId IS NULL;
@@ -246,9 +248,12 @@ AND NOT EXISTS (
 ### Phase 5: 리뷰 모니터링 시스템 ✅ 완료
 - [x] 신규 리뷰 실시간 감지
 - [x] 캠페인명, 블로거 ID, 매니저명 포함
-- [x] 시간 기반 중복 방지 (10분/1분 윈도우)
+- [x] ~~시간 기반 중복 방지~~ → **ID 기반 상태 추적 시스템**
 - [x] 타임존 이슈 해결 (MySQL NOW() + 9시간 보정)
 - [x] GitHub Actions 실행 안정성 개선
+- [x] **GitHub Gist 통합** (상태 영구 저장)
+- [x] **완벽한 중복 방지** (ID 기반)
+- [x] **누락 방지** (1시간 안전 윈도우)
 
 ### Phase 6: 확장 가능한 검증 항목 (예정)
 - [ ] 다른 데이터 무결성 검증 추가
@@ -267,23 +272,29 @@ AND NOT EXISTS (
   - responsedAt이 NOT NULL인 경우만
 - **알림**: 모든 누락 건을 10분마다 Slack으로 전송 (중복 체크 없음)
 
-### 7.2 리뷰 등록 모니터링
+### 7.2 리뷰 등록 모니터링 (Stateful 시스템)
 - **파일**: 
-  - review_monitor_github.js (GitHub Actions용 - 10분 윈도우)
-  - review_monitor_simple.js (로컬용 - 1분 윈도우)
+  - **review_monitor_stateful.js** (메인 - GitHub Gist 연동)
+  - review_monitor_simple.js (로컬 백업용)
 - **실행 주기**: 
-  - GitHub Actions: 10분마다 (cron: `*/10 * * * *`)
-  - 로컬: 1분마다
+  - GitHub Actions: 5분마다 설정 (cron: `*/5 * * * *`)
+  - 실제 실행: 5-20분 불규칙 (GitHub 부하에 따라)
+- **상태 관리**:
+  - **GitHub Gist**: 마지막 처리 ID 영구 저장
+  - **Gist ID**: d5885e45802bdba05f3152f410753cff
+  - **인증**: Personal Access Token (gist 권한)
 - **검증 조건**:
   - Propositions.review가 NOT NULL
-  - reviewRegisteredAt이 체크 시간 윈도우 내
-  - **중요**: MySQL NOW() + 9시간으로 KST 보정 필요
+  - **p.id > lastProcessedId** (Gist에서 가져옴)
+  - 1시간 안전 윈도우 (누락 방지)
+  - MySQL NOW() + 9시간으로 KST 보정
 - **알림 내용**:
   - 캠페인명 (cname)
   - 블로거 ID (Users.outerId)
   - 매니저명 (Companies.manager)
   - 리뷰 URL
   - 등록 시간 (한국 시간)
+  - 처리 ID (추적용)
 
 ### 7.3 배포 및 운영
 - **GitHub Actions**: 메인 배포 환경
@@ -311,17 +322,58 @@ AND NOT EXISTS (
 - **현상**: reviewRegisteredAt은 KST로 저장되지만 MySQL NOW()는 UTC 기준
 - **해결**: SQL 쿼리에서 `DATE_ADD(NOW(), INTERVAL 9 HOUR)`로 KST 보정
 
-### 10.2 GitHub Actions 불규칙 실행 ✅ 해결
-- **문제**: cron이 정확히 5분마다 실행되지 않음 (5-10분 간격 불규칙)
-- **해결**: 
-  - cron을 10분 간격으로 변경 (`*/10 * * * *`)
-  - 체크 윈도우를 10분으로 확대
-  - 리뷰 누락 방지
+### 10.2 GitHub Actions 불규칙 실행 ✅ 완벽 해결
+- **문제**: cron이 정확히 5분마다 실행되지 않음 (5-20분 간격 불규칙)
+- **근본 원인**: GitHub Actions의 스케줄러 부하로 인한 지연
+- **해결책**: **Stateful 시스템 구현**
+  - GitHub Gist로 마지막 처리 ID 저장
+  - ID 기반 추적으로 중복/누락 완벽 방지
+  - 1시간 안전 윈도우로 네트워크 이슈 대응
+  - 실행 간격과 무관하게 안정적 작동
 
-### 10.3 중복 알림 방지
+### 10.3 중복 알림 방지 ✅ 완벽 해결
 - **구매링크**: 중복 체크 제거, 매번 전체 알림
-- **리뷰**: 시간 윈도우 기반 필터링 (10분/1분)
+- **리뷰**: 
+  - ~~시간 윈도우 기반~~ → **ID 기반 상태 추적**
+  - GitHub Gist에 영구 저장
+  - 서버 재시작해도 상태 유지
 
 ### 10.4 GitHub Actions vs 로컬 환경
 - **차이점**: GitHub Actions 환경에서도 MySQL 연결 시 동일한 타임존 이슈 발생
 - **해결**: 모든 환경에서 동일한 9시간 보정 로직 적용
+
+### 10.5 환경변수 네이밍 제약 ✅ 해결
+- **문제**: GitHub Secrets에서 `GITHUB_`로 시작하는 이름 사용 불가
+- **원인**: GitHub 예약 접두사
+- **해결**: 
+  - `GITHUB_GIST_ID` → `GIST_ID`
+  - `GITHUB_TOKEN` → `GH_TOKEN`
+
+## 11. Stateful 시스템 아키텍처
+
+### 11.1 시스템 구성도
+```
+┌─────────────────┐     ┌──────────────┐     ┌─────────────┐
+│ GitHub Actions  │────▶│ Stateful     │────▶│   MySQL     │
+│  (5분마다)      │     │  Monitor     │     │  Database   │
+└─────────────────┘     └──────────────┘     └─────────────┘
+                               │
+                               ▼
+                        ┌──────────────┐
+                        │ GitHub Gist  │
+                        │ (상태 저장)   │
+                        └──────────────┘
+                               │
+                               ▼
+                        ┌──────────────┐
+                        │    Slack     │
+                        │   Webhook    │
+                        └──────────────┘
+```
+
+### 11.2 핵심 장점
+1. **완벽한 중복 방지**: ID 기반 추적으로 같은 리뷰 재알림 없음
+2. **누락 방지**: 1시간 안전 윈도우 + ID 추적
+3. **영구 상태 보존**: GitHub Gist에 저장되어 재시작 후에도 유지
+4. **실행 간격 독립성**: 불규칙한 실행에도 안정적 작동
+5. **확장성**: 다른 모니터링 시스템에도 동일 패턴 적용 가능

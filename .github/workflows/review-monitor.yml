@@ -31,4 +31,4 @@ jobs:
         SLACK_REVIEW_WEBHOOK_URL: ${{ secrets.SLACK_REVIEW_WEBHOOK_URL }}
         GIST_ID: ${{ secrets.GIST_ID }}
         GH_TOKEN: ${{ secrets.GH_TOKEN }}
-      run: node review_monitor_stateful.js
+      run: node review_monitor_hybrid.js
