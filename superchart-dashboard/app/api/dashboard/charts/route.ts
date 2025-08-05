@@ -52,8 +52,8 @@ export async function GET() {
         FROM Charges
         WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
           AND purpose IS NULL
-          AND created_at >= ?
-          AND created_at < ?
+          AND createdAt >= ?
+          AND createdAt < ?
       `, [monthStart, monthEnd])
 
       // 슈퍼차트 매출 (전체 - 블로그)
@@ -61,8 +61,8 @@ export async function GET() {
         SELECT COALESCE(SUM(amount), 0) as total
         FROM Charges
         WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
-          AND created_at >= ?
-          AND created_at < ?
+          AND createdAt >= ?
+          AND createdAt < ?
       `, [monthStart, monthEnd])
 
       const blogRevenue = parseFloat(blogRows[0].total) || 0

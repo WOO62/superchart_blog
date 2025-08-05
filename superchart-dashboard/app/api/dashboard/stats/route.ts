@@ -40,8 +40,8 @@ export async function GET() {
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
         AND purpose IS NULL
-        AND created_at >= ?
-        AND created_at < ?
+        AND createdAt >= ?
+        AND createdAt < ?
     `, [thisMonthStart, nextMonthStart])
     
     const thisMonthBlog = parseFloat(thisMonthBlogRows[0].total) || 0
@@ -52,8 +52,8 @@ export async function GET() {
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
         AND purpose IS NULL
-        AND created_at >= ?
-        AND created_at < ?
+        AND createdAt >= ?
+        AND createdAt < ?
     `, [lastYearMonth, lastYearMonthEnd])
     
     const lastYearBlog = parseFloat(lastYearBlogRows[0].total) || 0
@@ -76,8 +76,8 @@ export async function GET() {
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
-        AND created_at >= ?
-        AND created_at < ?
+        AND createdAt >= ?
+        AND createdAt < ?
     `, [thisMonthStart, nextMonthStart])
     
     const thisMonthSuperchart = parseFloat(thisMonthSuperchartRows[0].total) || 0
@@ -87,8 +87,8 @@ export async function GET() {
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
-        AND created_at >= ?
-        AND created_at < ?
+        AND createdAt >= ?
+        AND createdAt < ?
     `, [lastYearMonth, lastYearMonthEnd])
     
     const lastYearSuperchart = parseFloat(lastYearSuperchartRows[0].total) || 0
@@ -102,7 +102,7 @@ export async function GET() {
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
         AND purpose IS NULL
-        AND YEAR(created_at) = ?
+        AND YEAR(createdAt) = ?
     `, [currentYear - 1])
     
     const lastYearTotalBlog = parseFloat(lastYearTotalBlogRows[0].total) || 0
