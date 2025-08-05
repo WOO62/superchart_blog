@@ -102,9 +102,21 @@ async function syncMissingReviews() {
     
     for (const review of missingReviews) {
       try {
+        // 먼저 중복 체크
+        const { data: existing } = await supabase
+          .from('exposure_tracking')
+          .select('id')
+          .eq('proposition_id', review.id)
+          .single();
+        
+        if (existing) {
+          console.log(`⚠️  ID ${review.id}는 이미 존재합니다. 건너뜀.`);
+          continue;
+        }
+        
         const { data, error } = await supabase
           .from('exposure_tracking')
-          .upsert({
+          .insert({
             proposition_id: review.id,
             campaign_name: review.cname,
             manager: review.manager || null,
@@ -114,8 +126,6 @@ async function syncMissingReviews() {
             blogger_id: review.outerId || null,
             review_registered_at: review.reviewRegisteredAt,
             success_status: 'pending'
-          }, {
-            onConflict: 'proposition_id'
           });
         
         if (error) {

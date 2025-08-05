@@ -136,6 +136,12 @@ async function saveProcessedState(state) {
 // Supabase에 데이터 저장
 async function saveToSupabase(review) {
   try {
+    // Supabase 클라이언트 상태 확인
+    if (!supabase) {
+      console.error('❌ Supabase 클라이언트가 초기화되지 않았습니다!');
+      return false;
+    }
+    
     // 데이터 준비
     const dataToSave = {
       proposition_id: review.id,
