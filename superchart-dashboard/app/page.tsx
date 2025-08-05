@@ -82,7 +82,7 @@ export default function DashboardPage() {
           loading={loading}
         />
         <SalesCard
-          title="누적 블로그 매출"
+          title="올해 블로그 매출"
           value={statsData.totalBlog}
           change={statsData.totalBlogChange}
           changeLabel="전년 대비"

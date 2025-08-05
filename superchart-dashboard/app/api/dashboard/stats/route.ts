@@ -61,13 +61,14 @@ export async function GET() {
       ? ((thisMonthBlog - lastYearBlog) / lastYearBlog * 100).toFixed(1)
       : 0
 
-    // 3. 누적 블로그 매출
+    // 3. 올해 블로그 매출
     const [totalBlogRows] = await connection.execute(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
         AND purpose IS NULL
-    `)
+        AND YEAR(createdAt) = ?
+    `, [currentYear])
     
     const totalBlog = parseFloat(totalBlogRows[0].total) || 0
 

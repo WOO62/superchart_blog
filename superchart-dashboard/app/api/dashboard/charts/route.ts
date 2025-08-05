@@ -46,7 +46,7 @@ export async function GET() {
         : { year: monthData.year, month: monthData.month + 1 }
       const monthEnd = `${nextMonth.year}-${String(nextMonth.month).padStart(2, '0')}-01`
 
-      // 블로그 매출
+      // 블로그 매출 (purpose IS NULL만)
       const [blogRows] = await connection.execute(`
         SELECT COALESCE(SUM(amount), 0) as total
         FROM Charges
@@ -56,8 +56,8 @@ export async function GET() {
           AND createdAt < ?
       `, [monthStart, monthEnd])
 
-      // 슈퍼차트 매출 (전체 - 블로그)
-      const [totalRows] = await connection.execute(`
+      // 슈퍼차트 매출 (전체 매출 - purpose에 관계없이 모든 matching)
+      const [superchartRows] = await connection.execute(`
         SELECT COALESCE(SUM(amount), 0) as total
         FROM Charges
         WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -66,8 +66,7 @@ export async function GET() {
       `, [monthStart, monthEnd])
 
       const blogRevenue = parseFloat(blogRows[0].total) || 0
-      const totalRevenue = parseFloat(totalRows[0].total) || 0
-      const superchartRevenue = totalRevenue - blogRevenue
+      const superchartRevenue = parseFloat(superchartRows[0].total) || 0
 
       salesData.push({
         date: monthData.label,
