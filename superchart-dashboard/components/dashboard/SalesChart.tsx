@@ -6,7 +6,7 @@ import { formatCurrency } from '@/lib/utils'
 interface SalesChartProps {
   data: Array<{
     date: string
-    매출: number
+    블로그매출?: number
     슈퍼차트매출?: number
   }>
   loading?: boolean
@@ -59,22 +59,22 @@ export function SalesChart({ data, loading = false }: SalesChartProps) {
           />
           <Line 
             type="monotone" 
-            dataKey="매출" 
+            dataKey="블로그매출" 
             stroke="#F21A0D" 
             strokeWidth={2}
             dot={{ fill: '#F21A0D', r: 4 }}
             activeDot={{ r: 6 }}
+            name="블로그 매출"
           />
-          {data[0]?.슈퍼차트매출 !== undefined && (
-            <Line 
-              type="monotone" 
-              dataKey="슈퍼차트매출" 
-              stroke="#4F46E5" 
-              strokeWidth={2}
-              dot={{ fill: '#4F46E5', r: 4 }}
-              activeDot={{ r: 6 }}
-            />
-          )}
+          <Line 
+            type="monotone" 
+            dataKey="슈퍼차트매출" 
+            stroke="#4F46E5" 
+            strokeWidth={2}
+            dot={{ fill: '#4F46E5', r: 4 }}
+            activeDot={{ r: 6 }}
+            name="슈퍼차트 매출"
+          />
         </LineChart>
       </ResponsiveContainer>
     </div>

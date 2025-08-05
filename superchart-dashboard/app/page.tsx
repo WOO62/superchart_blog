@@ -8,51 +8,50 @@ import { DollarSign, TrendingUp, Calendar } from 'lucide-react'
 
 export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
-  const [salesData, setSalesData] = useState({
-    thisMonth: 0,
-    total: 0,
-    superchartTotal: 0,
-    thisMonthChange: 0,
-    totalChange: 0,
-    superchartChange: 0,
+  const [chartLoading, setChartLoading] = useState(true)
+  const [statsData, setStatsData] = useState({
+    thisMonthBlog: 0,
+    thisMonthBlogChange: 0,
+    totalBlog: 0,
+    totalBlogChange: 0,
+    thisMonthSuperchart: 0,
+    thisMonthSuperchartChange: 0,
   })
+  const [chartData, setChartData] = useState([])
+  const [volumeData, setVolumeData] = useState([])
 
-  // 임시 데이터 (나중에 API에서 가져올 예정)
-  const chartData = [
-    { date: '1월', 매출: 12000000, 슈퍼차트매출: 3000000 },
-    { date: '2월', 매출: 19000000, 슈퍼차트매출: 4500000 },
-    { date: '3월', 매출: 15000000, 슈퍼차트매출: 3800000 },
-    { date: '4월', 매출: 25000000, 슈퍼차트매출: 6200000 },
-    { date: '5월', 매출: 22000000, 슈퍼차트매출: 5500000 },
-    { date: '6월', 매출: 30000000, 슈퍼차트매출: 7500000 },
-    { date: '7월', 매출: 28000000, 슈퍼차트매출: 7000000 },
-    { date: '8월', 매출: 32000000, 슈퍼차트매출: 8000000 },
-  ]
+  // 통계 데이터 가져오기
+  const fetchStats = async () => {
+    try {
+      const response = await fetch('/api/dashboard/stats')
+      if (!response.ok) throw new Error('통계 데이터 로드 실패')
+      const data = await response.json()
+      setStatsData(data)
+    } catch (error) {
+      console.error('통계 데이터 로드 오류:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
 
-  const volumeData = [
-    { date: '1월', 발행량: 120 },
-    { date: '2월', 발행량: 190 },
-    { date: '3월', 발행량: 150 },
-    { date: '4월', 발행량: 250 },
-    { date: '5월', 발행량: 220 },
-    { date: '6월', 발행량: 300 },
-    { date: '7월', 발행량: 280 },
-    { date: '8월', 발행량: 320 },
-  ]
+  // 차트 데이터 가져오기
+  const fetchCharts = async () => {
+    try {
+      const response = await fetch('/api/dashboard/charts')
+      if (!response.ok) throw new Error('차트 데이터 로드 실패')
+      const data = await response.json()
+      setChartData(data.salesData || [])
+      setVolumeData(data.volumeData || [])
+    } catch (error) {
+      console.error('차트 데이터 로드 오류:', error)
+    } finally {
+      setChartLoading(false)
+    }
+  }
 
   useEffect(() => {
-    // 임시로 로딩 시뮬레이션
-    setTimeout(() => {
-      setSalesData({
-        thisMonth: 32000000,
-        total: 183000000,
-        superchartTotal: 45000000,
-        thisMonthChange: 14.3,
-        totalChange: 23.5,
-        superchartChange: 18.7,
-      })
-      setLoading(false)
-    }, 1000)
+    fetchStats()
+    fetchCharts()
   }, [])
 
   return (
@@ -66,25 +65,24 @@ export default function DashboardPage() {
       {/* Sales Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <SalesCard
-          title="이번 달 매출"
-          value={salesData.thisMonth}
-          change={salesData.thisMonthChange}
+          title="이번 달 블로그 매출"
+          value={statsData.thisMonthBlog}
+          change={statsData.thisMonthBlogChange}
           icon={<Calendar className="h-6 w-6 text-primary" />}
           loading={loading}
         />
         <SalesCard
-          title="누적 매출"
-          value={salesData.total}
-          change={salesData.totalChange}
+          title="누적 블로그 매출"
+          value={statsData.totalBlog}
+          change={statsData.totalBlogChange}
           changeLabel="전년 대비"
           icon={<TrendingUp className="h-6 w-6 text-primary" />}
           loading={loading}
         />
         <SalesCard
-          title="슈퍼차트 매출"
-          value={salesData.superchartTotal}
-          change={salesData.superchartChange}
-          changeLabel="전년 대비"
+          title="이번 달 슈퍼차트 매출"
+          value={statsData.thisMonthSuperchart}
+          change={statsData.thisMonthSuperchartChange}
           icon={<DollarSign className="h-6 w-6 text-primary" />}
           loading={loading}
         />
@@ -92,8 +90,8 @@ export default function DashboardPage() {
 
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <SalesChart data={chartData} loading={loading} />
-        <VolumeChart data={volumeData} loading={loading} />
+        <SalesChart data={chartData} loading={chartLoading} />
+        <VolumeChart data={volumeData} loading={chartLoading} />
       </div>
     </div>
   )
