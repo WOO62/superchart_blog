@@ -56,6 +56,25 @@ export function ExposureTable() {
     return keywords.replace(/[\[\]"]/g, '').trim()
   }
 
+  // 첫 번째 키워드 추출 함수
+  const getFirstKeyword = (keywords: string | null) => {
+    if (!keywords) return null
+    try {
+      const parsed = JSON.parse(keywords)
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed[0]
+      }
+    } catch {
+      // JSON이 아닌 경우 쉼표로 구분된 첫 번째 값 반환
+      const cleaned = keywords.replace(/[\[\]"]/g, '').trim()
+      const parts = cleaned.split(',')
+      if (parts.length > 0) {
+        return parts[0].trim()
+      }
+    }
+    return keywords.replace(/[\[\]"]/g, '').trim()
+  }
+
   // 매니저 목록 가져오기
   const fetchManagers = async () => {
     const { data: managerData } = await supabase
@@ -394,6 +413,9 @@ export function ExposureTable() {
                 키워드
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                검색창
+              </th>
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 성공 여부
               </th>
               <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -442,6 +464,22 @@ export function ExposureTable() {
                   <div className="max-w-xs truncate" title={formatKeywords(item.keywords)}>
                     {formatKeywords(item.keywords)}
                   </div>
+                </td>
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  {getFirstKeyword(item.keywords) ? (
+                    <a
+                      href={`https://search.naver.com/search.naver?ssc=tab.blog.all&sm=tab_jum&query=${encodeURIComponent(getFirstKeyword(item.keywords)!)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center text-primary hover:text-primary/80"
+                      title={`"${getFirstKeyword(item.keywords)}" 검색`}
+                    >
+                      <Search className="h-4 w-4 mr-1" />
+                      <span>검색</span>
+                    </a>
+                  ) : (
+                    <span className="text-gray-400">-</span>
+                  )}
                 </td>
                 <td className="px-4 py-3 text-sm whitespace-nowrap">
                   <select
