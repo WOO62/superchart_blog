@@ -58,7 +58,7 @@ export async function GET() {
     
     const lastYearBlog = parseFloat(lastYearBlogRows[0].total) || 0
     const blogChange = lastYearBlog > 0 
-      ? ((thisMonthBlog - lastYearBlog) / lastYearBlog * 100).toFixed(1)
+      ? parseFloat(((thisMonthBlog - lastYearBlog) / lastYearBlog * 100).toFixed(1))
       : 0
 
     // 3. 올해 블로그 매출
@@ -94,7 +94,7 @@ export async function GET() {
     
     const lastYearSuperchart = parseFloat(lastYearSuperchartRows[0].total) || 0
     const superchartChange = lastYearSuperchart > 0
-      ? ((thisMonthSuperchart - lastYearSuperchart) / lastYearSuperchart * 100).toFixed(1)
+      ? parseFloat(((thisMonthSuperchart - lastYearSuperchart) / lastYearSuperchart * 100).toFixed(1))
       : 0
 
     // 6. 작년 전체 대비 계산을 위한 작년 누적
@@ -108,16 +108,16 @@ export async function GET() {
     
     const lastYearTotalBlog = parseFloat(lastYearTotalBlogRows[0].total) || 0
     const totalBlogChange = lastYearTotalBlog > 0
-      ? ((totalBlog - lastYearTotalBlog) / lastYearTotalBlog * 100).toFixed(1)
+      ? parseFloat(((totalBlog - lastYearTotalBlog) / lastYearTotalBlog * 100).toFixed(1))
       : 0
 
     return NextResponse.json({
       thisMonthBlog,
-      thisMonthBlogChange: parseFloat(blogChange),
+      thisMonthBlogChange: blogChange,
       totalBlog,
-      totalBlogChange: parseFloat(totalBlogChange),
+      totalBlogChange: totalBlogChange,
       thisMonthSuperchart,
-      thisMonthSuperchartChange: parseFloat(superchartChange),
+      thisMonthSuperchartChange: superchartChange,
     })
 
   } catch (error: any) {
