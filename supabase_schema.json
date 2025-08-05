@@ -1,0 +1,3321 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "",
+    "title": "standard public schema",
+    "version": "12.2.3 (519615d)"
+  },
+  "host": "lrszozurmxfjzarnjibw.supabase.co:443",
+  "basePath": "/",
+  "schemes": [
+    "https"
+  ],
+  "consumes": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "produces": [
+    "application/json",
+    "application/vnd.pgrst.object+json;nulls=stripped",
+    "application/vnd.pgrst.object+json",
+    "text/csv"
+  ],
+  "paths": {
+    "/": {
+      "get": {
+        "produces": [
+          "application/openapi+json",
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "summary": "OpenAPI description (this document)",
+        "tags": [
+          "Introspection"
+        ]
+      }
+    },
+    "/marketing_leads_new": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.email"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/marketing_leads_new"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_new"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.marketing_leads_new"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "marketing_leads_new"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.email"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_new"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_new.email"
+          },
+          {
+            "$ref": "#/parameters/body.marketing_leads_new"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_new"
+        ]
+      }
+    },
+    "/temp_company_upload": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/temp_company_upload"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "temp_company_upload"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.temp_company_upload"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "temp_company_upload"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "temp_company_upload"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.temp_company_upload.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/body.temp_company_upload"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "temp_company_upload"
+        ]
+      }
+    },
+    "/quotes": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quotes.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_date"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.supplier_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.representative"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.registration_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.client_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_until"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.subtotal"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.vat"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.total_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.pdf_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_period"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/quotes"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "quotes"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.quotes"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "quotes"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quotes.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_date"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.supplier_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.representative"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.registration_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.client_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_until"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.subtotal"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.vat"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.total_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.pdf_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_period"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "quotes"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quotes.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.quote_date"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.supplier_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.representative"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.registration_number"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.address"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.phone"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.client_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_until"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.subtotal"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.vat"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.total_amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.pdf_url"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.created_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quotes.valid_period"
+          },
+          {
+            "$ref": "#/parameters/body.quotes"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "quotes"
+        ]
+      }
+    },
+    "/exposure_tracking": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.proposition_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.campaign_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.manager"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.keywords"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.post_link"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.blogger_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.review_registered_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.success_status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.first_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.second_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.feedback"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/exposure_tracking"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "exposure_tracking"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.exposure_tracking"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "exposure_tracking"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.proposition_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.campaign_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.manager"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.keywords"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.post_link"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.blogger_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.review_registered_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.success_status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.first_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.second_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.feedback"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "exposure_tracking"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.proposition_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.campaign_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.manager"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.keywords"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.post_link"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.blogger_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.review_registered_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.success_status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.first_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.second_check_rank"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.feedback"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.exposure_tracking.updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.exposure_tracking"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "exposure_tracking"
+        ]
+      }
+    },
+    "/quote_items": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quote_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.item_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quantity"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.unit_price"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.duration"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.note"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.sort_order"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.category"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/quote_items"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "quote_items"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.quote_items"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "quote_items"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quote_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.item_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quantity"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.unit_price"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.duration"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.note"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.sort_order"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.category"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "quote_items"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quote_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.item_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.quantity"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.unit_price"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.duration"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.note"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.amount"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.sort_order"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.quote_items.category"
+          },
+          {
+            "$ref": "#/parameters/body.quote_items"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "quote_items"
+        ]
+      }
+    },
+    "/marketing_lead_updates": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.mysql_lead_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email_updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/marketing_lead_updates"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "marketing_lead_updates"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.marketing_lead_updates"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "marketing_lead_updates"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.mysql_lead_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email_updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_lead_updates"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.mysql_lead_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.notes"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_by"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_lead_updates.email_updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.marketing_lead_updates"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_lead_updates"
+        ]
+      }
+    },
+    "/marketing_leads_mysql_copy": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.route"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.recommended"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_step"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_posted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.synced_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.email"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/marketing_leads_mysql_copy"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_mysql_copy"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.marketing_leads_mysql_copy"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "marketing_leads_mysql_copy"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.route"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.recommended"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_step"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_posted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.synced_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.email"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_mysql_copy"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.assignee"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_category"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.contact"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.x"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.y"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.local_code"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.naver_place_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.crawl_fail_reason"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.call_temperature"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.agree_to_marketing"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_inquiry_skipped"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.kakao_registered"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.mysql_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.company_created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.route"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.recommended"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.ad_step"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.is_posted"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.synced_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.memo_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.sms_responded_updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.marketing_leads_mysql_copy.email"
+          },
+          {
+            "$ref": "#/parameters/body.marketing_leads_mysql_copy"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "marketing_leads_mysql_copy"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "marketing_leads_new": {
+      "required": [
+        "id",
+        "company_name",
+        "ad_category",
+        "contact"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "integer",
+          "type": "integer"
+        },
+        "company_id": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "assignee": {
+          "format": "character varying",
+          "maxLength": 36,
+          "type": "string"
+        },
+        "company_name": {
+          "format": "character varying",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "ad_category": {
+          "format": "character varying",
+          "maxLength": 36,
+          "type": "string"
+        },
+        "contact": {
+          "format": "character varying",
+          "maxLength": 36,
+          "type": "string"
+        },
+        "x": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "y": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "local_code": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "naver_place_id": {
+          "format": "character varying",
+          "maxLength": 256,
+          "type": "string"
+        },
+        "crawl_fail_reason": {
+          "format": "character varying",
+          "maxLength": 64,
+          "type": "string"
+        },
+        "call_temperature": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "agree_to_marketing": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "is_inquiry_skipped": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "kakao_registered": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "memo": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "memo_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "sms_responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "sms_responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "temp_company_upload": {
+      "required": [
+        "company_name",
+        "memo"
+      ],
+      "properties": {
+        "company_name": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "text",
+          "type": "string"
+        },
+        "memo": {
+          "format": "text",
+          "type": "string"
+        },
+        "responded": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "mysql_id": {
+          "format": "integer",
+          "type": "integer"
+        }
+      },
+      "type": "object"
+    },
+    "quotes": {
+      "required": [
+        "id",
+        "quote_name",
+        "quote_date",
+        "supplier_name",
+        "representative",
+        "registration_number",
+        "address",
+        "phone",
+        "client_name",
+        "category",
+        "subtotal",
+        "vat",
+        "total_amount"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "quote_name": {
+          "format": "character varying",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "quote_date": {
+          "format": "date",
+          "type": "string"
+        },
+        "supplier_name": {
+          "default": "주식회사 마야크루",
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "representative": {
+          "default": "오준호",
+          "format": "character varying",
+          "maxLength": 50,
+          "type": "string"
+        },
+        "registration_number": {
+          "default": "875-81-00475",
+          "format": "character varying",
+          "maxLength": 50,
+          "type": "string"
+        },
+        "address": {
+          "default": "서울 마포구 월드컵북로 35, 5층",
+          "format": "text",
+          "type": "string"
+        },
+        "phone": {
+          "default": "02-876-0119",
+          "format": "character varying",
+          "maxLength": 20,
+          "type": "string"
+        },
+        "client_name": {
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "category": {
+          "default": "서비스",
+          "format": "character varying",
+          "maxLength": 20,
+          "type": "string"
+        },
+        "valid_until": {
+          "format": "date",
+          "type": "string"
+        },
+        "subtotal": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "vat": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "total_amount": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "status": {
+          "default": "대기",
+          "format": "character varying",
+          "maxLength": 20,
+          "type": "string"
+        },
+        "pdf_url": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "created_by": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "valid_period": {
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "exposure_tracking": {
+      "required": [
+        "id",
+        "post_link",
+        "review_registered_at"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "integer",
+          "type": "integer"
+        },
+        "proposition_id": {
+          "format": "bigint",
+          "type": "integer"
+        },
+        "campaign_name": {
+          "format": "character varying",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "manager": {
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "company_name": {
+          "format": "character varying",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "keywords": {
+          "format": "text",
+          "type": "string"
+        },
+        "post_link": {
+          "format": "text",
+          "type": "string"
+        },
+        "blogger_id": {
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "review_registered_at": {
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "success_status": {
+          "default": "pending",
+          "format": "character varying",
+          "maxLength": 20,
+          "type": "string"
+        },
+        "first_check_rank": {
+          "format": "text",
+          "type": "string"
+        },
+        "second_check_rank": {
+          "format": "text",
+          "type": "string"
+        },
+        "feedback": {
+          "format": "text",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "quote_items": {
+      "required": [
+        "id",
+        "item_name",
+        "quantity",
+        "unit_price",
+        "amount"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "quote_id": {
+          "description": "Note:\nThis is a Foreign Key to `quotes.id`.<fk table='quotes' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "item_name": {
+          "format": "character varying",
+          "maxLength": 200,
+          "type": "string"
+        },
+        "quantity": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "unit_price": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "duration": {
+          "format": "character varying",
+          "maxLength": 100,
+          "type": "string"
+        },
+        "note": {
+          "format": "text",
+          "type": "string"
+        },
+        "amount": {
+          "format": "numeric",
+          "type": "number"
+        },
+        "sort_order": {
+          "default": 0,
+          "format": "integer",
+          "type": "integer"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "category": {
+          "format": "character varying",
+          "maxLength": 50,
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "marketing_lead_updates": {
+      "required": [
+        "id",
+        "mysql_lead_id"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "integer",
+          "type": "integer"
+        },
+        "mysql_lead_id": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "status": {
+          "format": "character varying",
+          "maxLength": 50,
+          "type": "string"
+        },
+        "notes": {
+          "format": "text",
+          "type": "string"
+        },
+        "updated_by": {
+          "format": "character varying",
+          "maxLength": 255,
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "memo": {
+          "format": "text",
+          "type": "string"
+        },
+        "memo_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "sms_responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "sms_responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        },
+        "email_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "marketing_leads_mysql_copy": {
+      "required": [
+        "id",
+        "mysql_id",
+        "company_name"
+      ],
+      "properties": {
+        "id": {
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "integer",
+          "type": "integer"
+        },
+        "mysql_id": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "company_id": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "assignee": {
+          "format": "text",
+          "type": "string"
+        },
+        "company_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "ad_category": {
+          "format": "text",
+          "type": "string"
+        },
+        "contact": {
+          "format": "text",
+          "type": "string"
+        },
+        "x": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "y": {
+          "format": "double precision",
+          "type": "number"
+        },
+        "local_code": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "naver_place_id": {
+          "format": "text",
+          "type": "string"
+        },
+        "crawl_fail_reason": {
+          "format": "text",
+          "type": "string"
+        },
+        "call_temperature": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "agree_to_marketing": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "is_inquiry_skipped": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "kakao_registered": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "mysql_created_at": {
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "mysql_updated_at": {
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "company_created_at": {
+          "format": "timestamp without time zone",
+          "type": "string"
+        },
+        "route": {
+          "format": "text",
+          "type": "string"
+        },
+        "recommended": {
+          "format": "text",
+          "type": "string"
+        },
+        "ad_step": {
+          "format": "integer",
+          "type": "integer"
+        },
+        "is_posted": {
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "memo": {
+          "format": "text",
+          "type": "string"
+        },
+        "synced_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "memo_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "sms_responded": {
+          "default": false,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "sms_responded_updated_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "email": {
+          "format": "text",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "parameters": {
+    "preferParams": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "params=single-object"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferReturn": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferCount": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "count=none"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "preferPost": {
+      "name": "Prefer",
+      "description": "Preference",
+      "required": false,
+      "enum": [
+        "return=representation",
+        "return=minimal",
+        "return=none",
+        "resolution=ignore-duplicates",
+        "resolution=merge-duplicates"
+      ],
+      "in": "header",
+      "type": "string"
+    },
+    "select": {
+      "name": "select",
+      "description": "Filtering Columns",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "on_conflict": {
+      "name": "on_conflict",
+      "description": "On Conflict",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "order": {
+      "name": "order",
+      "description": "Ordering",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "range": {
+      "name": "Range",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "header",
+      "type": "string"
+    },
+    "rangeUnit": {
+      "name": "Range-Unit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "default": "items",
+      "in": "header",
+      "type": "string"
+    },
+    "offset": {
+      "name": "offset",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "limit": {
+      "name": "limit",
+      "description": "Limiting and Pagination",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.marketing_leads_new": {
+      "name": "marketing_leads_new",
+      "description": "marketing_leads_new",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/marketing_leads_new"
+      }
+    },
+    "rowFilter.marketing_leads_new.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.company_id": {
+      "name": "company_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.assignee": {
+      "name": "assignee",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.company_name": {
+      "name": "company_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.ad_category": {
+      "name": "ad_category",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.contact": {
+      "name": "contact",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.x": {
+      "name": "x",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.y": {
+      "name": "y",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.local_code": {
+      "name": "local_code",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.naver_place_id": {
+      "name": "naver_place_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.crawl_fail_reason": {
+      "name": "crawl_fail_reason",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.call_temperature": {
+      "name": "call_temperature",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.agree_to_marketing": {
+      "name": "agree_to_marketing",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.is_inquiry_skipped": {
+      "name": "is_inquiry_skipped",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.kakao_registered": {
+      "name": "kakao_registered",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.memo": {
+      "name": "memo",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.responded": {
+      "name": "responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.responded_updated_at": {
+      "name": "responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.memo_updated_at": {
+      "name": "memo_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.sms_responded": {
+      "name": "sms_responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.sms_responded_updated_at": {
+      "name": "sms_responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_new.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.temp_company_upload": {
+      "name": "temp_company_upload",
+      "description": "temp_company_upload",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/temp_company_upload"
+      }
+    },
+    "rowFilter.temp_company_upload.company_name": {
+      "name": "company_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.temp_company_upload.memo": {
+      "name": "memo",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.temp_company_upload.responded": {
+      "name": "responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.temp_company_upload.mysql_id": {
+      "name": "mysql_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.quotes": {
+      "name": "quotes",
+      "description": "quotes",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/quotes"
+      }
+    },
+    "rowFilter.quotes.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.quote_name": {
+      "name": "quote_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.quote_date": {
+      "name": "quote_date",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.supplier_name": {
+      "name": "supplier_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.representative": {
+      "name": "representative",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.registration_number": {
+      "name": "registration_number",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.address": {
+      "name": "address",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.phone": {
+      "name": "phone",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.client_name": {
+      "name": "client_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.category": {
+      "name": "category",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.valid_until": {
+      "name": "valid_until",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.subtotal": {
+      "name": "subtotal",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.vat": {
+      "name": "vat",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.total_amount": {
+      "name": "total_amount",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.pdf_url": {
+      "name": "pdf_url",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.created_by": {
+      "name": "created_by",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quotes.valid_period": {
+      "name": "valid_period",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.exposure_tracking": {
+      "name": "exposure_tracking",
+      "description": "exposure_tracking",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/exposure_tracking"
+      }
+    },
+    "rowFilter.exposure_tracking.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.proposition_id": {
+      "name": "proposition_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.campaign_name": {
+      "name": "campaign_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.manager": {
+      "name": "manager",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.company_name": {
+      "name": "company_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.keywords": {
+      "name": "keywords",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.post_link": {
+      "name": "post_link",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.blogger_id": {
+      "name": "blogger_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.review_registered_at": {
+      "name": "review_registered_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.success_status": {
+      "name": "success_status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.first_check_rank": {
+      "name": "first_check_rank",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.second_check_rank": {
+      "name": "second_check_rank",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.feedback": {
+      "name": "feedback",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.exposure_tracking.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.quote_items": {
+      "name": "quote_items",
+      "description": "quote_items",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/quote_items"
+      }
+    },
+    "rowFilter.quote_items.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.quote_id": {
+      "name": "quote_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.item_name": {
+      "name": "item_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.quantity": {
+      "name": "quantity",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.unit_price": {
+      "name": "unit_price",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.duration": {
+      "name": "duration",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.note": {
+      "name": "note",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.amount": {
+      "name": "amount",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.sort_order": {
+      "name": "sort_order",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.quote_items.category": {
+      "name": "category",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.marketing_lead_updates": {
+      "name": "marketing_lead_updates",
+      "description": "marketing_lead_updates",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/marketing_lead_updates"
+      }
+    },
+    "rowFilter.marketing_lead_updates.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.mysql_lead_id": {
+      "name": "mysql_lead_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.notes": {
+      "name": "notes",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.updated_by": {
+      "name": "updated_by",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.responded": {
+      "name": "responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.responded_updated_at": {
+      "name": "responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.memo": {
+      "name": "memo",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.memo_updated_at": {
+      "name": "memo_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.sms_responded": {
+      "name": "sms_responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.sms_responded_updated_at": {
+      "name": "sms_responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_lead_updates.email_updated_at": {
+      "name": "email_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.marketing_leads_mysql_copy": {
+      "name": "marketing_leads_mysql_copy",
+      "description": "marketing_leads_mysql_copy",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/marketing_leads_mysql_copy"
+      }
+    },
+    "rowFilter.marketing_leads_mysql_copy.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.mysql_id": {
+      "name": "mysql_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.company_id": {
+      "name": "company_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.assignee": {
+      "name": "assignee",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.company_name": {
+      "name": "company_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.ad_category": {
+      "name": "ad_category",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.contact": {
+      "name": "contact",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.x": {
+      "name": "x",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.y": {
+      "name": "y",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.local_code": {
+      "name": "local_code",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.naver_place_id": {
+      "name": "naver_place_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.crawl_fail_reason": {
+      "name": "crawl_fail_reason",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.call_temperature": {
+      "name": "call_temperature",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.agree_to_marketing": {
+      "name": "agree_to_marketing",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.is_inquiry_skipped": {
+      "name": "is_inquiry_skipped",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.kakao_registered": {
+      "name": "kakao_registered",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.mysql_created_at": {
+      "name": "mysql_created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.mysql_updated_at": {
+      "name": "mysql_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.company_created_at": {
+      "name": "company_created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.route": {
+      "name": "route",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.recommended": {
+      "name": "recommended",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.ad_step": {
+      "name": "ad_step",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.is_posted": {
+      "name": "is_posted",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.memo": {
+      "name": "memo",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.synced_at": {
+      "name": "synced_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.memo_updated_at": {
+      "name": "memo_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.responded": {
+      "name": "responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.responded_updated_at": {
+      "name": "responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.sms_responded": {
+      "name": "sms_responded",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.sms_responded_updated_at": {
+      "name": "sms_responded_updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.marketing_leads_mysql_copy.email": {
+      "name": "email",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    }
+  },
+  "externalDocs": {
+    "description": "PostgREST Documentation",
+    "url": "https://postgrest.org/en/v12/references/api.html"
+  }
+}
