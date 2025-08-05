@@ -29,20 +29,25 @@ for (const envVar of requiredEnvVars) {
   }
 }
 
-// Supabase 설정
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Supabase 클라이언트를 나중에 초기화
+let supabase = null;
 
-console.log('🔍 Supabase 환경변수 확인:');
-console.log(`   URL: ${supabaseUrl ? '✅ 설정됨' : '❌ 없음'}`);
-console.log(`   KEY: ${supabaseKey ? '✅ 설정됨 (길이: ${supabaseKey.length})' : '❌ 없음'}`);
+// Supabase 클라이언트 초기화 함수
+function initializeSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-if (!supabaseUrl || !supabaseKey) {
-  console.error('❌ Supabase 환경변수가 누락되었습니다!');
-  process.exit(1);
+  console.log('🔍 Supabase 환경변수 확인:');
+  console.log(`   URL: ${supabaseUrl ? '✅ 설정됨' : '❌ 없음'}`);
+  console.log(`   KEY: ${supabaseKey ? '✅ 설정됨 (길이: ${supabaseKey.length})' : '❌ 없음'}`);
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error('❌ Supabase 환경변수가 누락되었습니다!');
+    return null;
+  }
+
+  return createClient(supabaseUrl, supabaseKey);
 }
-
-const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Gist에서 상태 읽기
 async function getProcessedState() {
@@ -272,6 +277,13 @@ async function monitorNewReviews() {
   let connection;
   
   try {
+    // Supabase 초기화
+    supabase = initializeSupabase();
+    if (!supabase) {
+      console.error('❌ Supabase 클라이언트 초기화 실패');
+      return;
+    }
+    
     // Gist 설정 확인
     if (!GIST_ID || !GITHUB_TOKEN) {
       console.error('❌ GIST_ID 또는 GH_TOKEN 환경변수가 설정되지 않았습니다.');
