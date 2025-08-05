@@ -325,22 +325,24 @@ async function monitorNewReviews() {
             console.error(`❌ ID ${review.id} Supabase 저장 최종 실패!`);
             console.error(`   캠페인: ${review.cname}`);
             console.error(`   URL: ${review.review}`);
-            // 저장 실패해도 계속 진행하되, 로그에 명확히 기록
+            // Supabase 저장 실패 시 처리된 목록에 추가하지 않음 (다음에 재시도 가능)
           } else {
             console.log(`✅ ID ${review.id} 재시도 성공`);
           }
         }
         
-        successCount++;
-        
-        // 처리된 ID 기록 (Supabase 저장 성공 여부와 관계없이)
-        // 이렇게 하면 중복 알림은 방지하면서 실패한 건은 로그로 추적 가능
-        newProcessedIds.push({
-          id: review.id,
-          time: new Date().toISOString(),
-          registeredAt: review.reviewRegisteredAt,
-          supabaseSaved: saveSuccess // 저장 성공 여부 기록
-        });
+        // Supabase 저장이 성공한 경우에만 처리된 ID 목록에 추가
+        if (saveSuccess) {
+          successCount++;
+          newProcessedIds.push({
+            id: review.id,
+            time: new Date().toISOString(),
+            registeredAt: review.reviewRegisteredAt,
+            supabaseSaved: true
+          });
+        } else {
+          console.log(`⚠️  ID ${review.id}는 Supabase 저장 실패로 다음에 재처리됩니다.`);
+        }
         
         // Slack rate limit 방지
         await new Promise(resolve => setTimeout(resolve, 1000));
