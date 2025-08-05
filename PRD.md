@@ -58,23 +58,17 @@
 - GitHub Gist 처리 목록 관리
 - Supabase 저장 (재시도 로직 포함)
 - 중복 방지 메커니즘
+- 프로세스 순서: Supabase 저장 → 성공 시 Slack 알림
 ```
 
-#### 3.2 데이터 동기화
-```javascript
-// sync_missing_reviews.js
-- 누락된 리뷰 자동 감지
-- 배치 처리로 효율적 동기화
-- proposition_id 매칭
-```
+#### 3.2 실행 환경
+- **로컬**: PM2로 관리 (local_monitor.js - 2분 주기)
+- **GitHub Actions**: 5분 주기 자동 실행
+- **중복 방지**: GitHub Gist로 처리 상태 공유
 
-#### 3.3 CSV 임포트
-```javascript
-// import_csv_fixed.js
-- 타임스탬프 형식 변환 (YYYY-MM-DD HH:MM:SS → ISO 8601)
-- NULL 값 처리
-- 중복 체크
-```
+#### 3.3 모니터링 프로세스
+- **리뷰 모니터링**: review_monitor_hybrid.js
+- **구매링크 모니터링**: purchase_link_monitor.js (10분 주기)
 
 ## 기술 스택
 
@@ -190,12 +184,19 @@
   - Supabase 저장 실패 시 Gist에 표시하지 않도록 수정
   - `supabaseSaved` 필드로 저장 성공 여부 추적
   - 실패한 리뷰 자동 재처리 로직 구현
+  - **프로세스 순서 변경**: Supabase 저장 → Slack 알림 (저장 성공 시에만)
+  - **환경변수 초기화 타이밍 개선**: 런타임 시 Supabase 클라이언트 초기화
 
 - **데이터 무결성 강화**
   - 중복 체크 후 insert로 upsert 대체
   - 누락된 리뷰 복구 스크립트 추가
   - GitHub Actions 환경변수 설정 개선
   - MySQL createdAt 컬럼명 이슈 해결
+
+- **코드베이스 정리**
+  - 일회성 디버깅 스크립트들을 old_scripts 폴더로 이동
+  - 현재 사용 중인 5개 파일만 유지 (review_monitor_hybrid.js, local_monitor.js 등)
+  - PM2 프로세스 관리로 안정성 향상
 
 ### 2025-08-04
 - 통계 카드 기능 추가
@@ -213,4 +214,4 @@
 ## 문서 정보
 - **작성일**: 2025-08-04
 - **최종 수정**: 2025-08-05
-- **버전**: 1.3.0
+- **버전**: 1.4.0
