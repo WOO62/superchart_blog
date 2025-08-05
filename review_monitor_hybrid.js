@@ -141,11 +141,21 @@ async function saveToSupabase(review) {
     
     console.log(`📤 Supabase 저장 시도 - ID: ${review.id}, 캠페인: ${review.cname}`);
     
+    // 중복 체크 후 insert (upsert 대신)
+    const { data: existing } = await supabase
+      .from('exposure_tracking')
+      .select('id')
+      .eq('proposition_id', review.id)
+      .single();
+    
+    if (existing) {
+      console.log(`⚠️  ID ${review.id}는 이미 존재합니다. 건너뜀.`);
+      return true; // 이미 존재하면 성공으로 처리
+    }
+    
     const { data, error } = await supabase
       .from('exposure_tracking')
-      .upsert(dataToSave, {
-        onConflict: 'proposition_id'
-      });
+      .insert(dataToSave);
 
     if (error) {
       console.error('❌ Supabase 저장 실패 - ID:', review.id);
