@@ -197,8 +197,16 @@ async function saveToSupabase(review) {
     return true;
   } catch (error) {
     console.error('❌ Supabase 저장 예외 발생 - ID:', review.id);
+    console.error('   예외 타입:', error.constructor.name);
     console.error('   예외 메시지:', error.message);
     console.error('   예외 스택:', error.stack);
+    console.error('   전체 에러:', error);
+    
+    // 네트워크 에러인 경우
+    if (error.message && error.message.includes('fetch')) {
+      console.error('   🌐 네트워크 에러 감지됨');
+    }
+    
     return false;
   }
 }
@@ -353,10 +361,9 @@ async function monitorNewReviews() {
       const newProcessedIds = [];
       
       for (const review of unprocessedReviews) {
-        // Slack 알림 전송
-        await sendSlackNotification(webhookUrl, review);
+        console.log(`\n🔄 리뷰 처리 시작 - ID: ${review.id}`);
         
-        // Supabase에 저장 (실패 시 재시도)
+        // 먼저 Supabase에 저장 시도
         let saveSuccess = await saveToSupabase(review);
         
         if (!saveSuccess) {
@@ -375,8 +382,11 @@ async function monitorNewReviews() {
           }
         }
         
-        // Supabase 저장이 성공한 경우에만 처리된 ID 목록에 추가
+        // Supabase 저장이 성공한 경우에만 Slack 알림 전송
         if (saveSuccess) {
+          // Slack 알림 전송
+          await sendSlackNotification(webhookUrl, review);
+          
           successCount++;
           newProcessedIds.push({
             id: review.id,
@@ -385,10 +395,17 @@ async function monitorNewReviews() {
             supabaseSaved: true
           });
         } else {
-          console.log(`⚠️  ID ${review.id}는 Supabase 저장 실패로 다음에 재처리됩니다.`);
+          console.log(`⚠️  ID ${review.id}는 Supabase 저장 실패로 Slack 알림을 보내지 않습니다.`);
+          // 실패한 경우에도 Gist에 기록하되, supabaseSaved를 false로
+          newProcessedIds.push({
+            id: review.id,
+            time: new Date().toISOString(),
+            registeredAt: review.reviewRegisteredAt,
+            supabaseSaved: false
+          });
         }
         
-        // Slack rate limit 방지
+        // API rate limit 방지
         await new Promise(resolve => setTimeout(resolve, 1000));
       }
       
