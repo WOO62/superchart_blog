@@ -35,7 +35,7 @@ export async function GET() {
       : `${currentYear - 1}-${String(currentMonth + 1).padStart(2, '0')}-01`
 
     // 1. 이번 달 블로그 매출
-    const [thisMonthBlogRows] = await connection.execute(`
+    const [thisMonthBlogRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -47,7 +47,7 @@ export async function GET() {
     const thisMonthBlog = parseFloat(thisMonthBlogRows[0].total) || 0
 
     // 2. 작년 같은 달 블로그 매출 (전년 대비 계산)
-    const [lastYearBlogRows] = await connection.execute(`
+    const [lastYearBlogRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -62,7 +62,7 @@ export async function GET() {
       : 0
 
     // 3. 올해 블로그 매출
-    const [totalBlogRows] = await connection.execute(`
+    const [totalBlogRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -73,7 +73,7 @@ export async function GET() {
     const totalBlog = parseFloat(totalBlogRows[0].total) || 0
 
     // 4. 이번 달 슈퍼차트 매출
-    const [thisMonthSuperchartRows] = await connection.execute(`
+    const [thisMonthSuperchartRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -84,7 +84,7 @@ export async function GET() {
     const thisMonthSuperchart = parseFloat(thisMonthSuperchartRows[0].total) || 0
 
     // 5. 작년 같은 달 슈퍼차트 매출
-    const [lastYearSuperchartRows] = await connection.execute(`
+    const [lastYearSuperchartRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
@@ -98,7 +98,7 @@ export async function GET() {
       : 0
 
     // 6. 작년 전체 대비 계산을 위한 작년 누적
-    const [lastYearTotalBlogRows] = await connection.execute(`
+    const [lastYearTotalBlogRows] = await connection.execute<any[]>(`
       SELECT COALESCE(SUM(amount), 0) as total
       FROM Charges
       WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
