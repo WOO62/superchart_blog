@@ -32,6 +32,16 @@ for (const envVar of requiredEnvVars) {
 // Supabase 설정
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+console.log('🔍 Supabase 환경변수 확인:');
+console.log(`   URL: ${supabaseUrl ? '✅ 설정됨' : '❌ 없음'}`);
+console.log(`   KEY: ${supabaseKey ? '✅ 설정됨 (길이: ${supabaseKey.length})' : '❌ 없음'}`);
+
+if (!supabaseUrl || !supabaseKey) {
+  console.error('❌ Supabase 환경변수가 누락되었습니다!');
+  process.exit(1);
+}
+
 const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Gist에서 상태 읽기
@@ -156,6 +166,8 @@ async function saveToSupabase(review) {
       return true; // 이미 존재하면 성공으로 처리
     }
     
+    console.log('📋 저장할 데이터:', JSON.stringify(dataToSave, null, 2));
+    
     const { data, error } = await supabase
       .from('exposure_tracking')
       .insert(dataToSave);
@@ -166,6 +178,7 @@ async function saveToSupabase(review) {
       console.error('   에러 메시지:', error.message);
       console.error('   에러 상세:', error.details);
       console.error('   에러 힌트:', error.hint);
+      console.error('   전체 에러 객체:', JSON.stringify(error, null, 2));
       return false;
     }
 
