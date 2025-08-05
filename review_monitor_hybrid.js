@@ -142,13 +142,16 @@ async function saveToSupabase(review) {
     console.log(`📤 Supabase 저장 시도 - ID: ${review.id}, 캠페인: ${review.cname}`);
     
     // 중복 체크 후 insert (upsert 대신)
-    const { data: existing } = await supabase
+    const { data: existing, error: checkError } = await supabase
       .from('exposure_tracking')
       .select('id')
-      .eq('proposition_id', review.id)
-      .single();
+      .eq('proposition_id', review.id);
     
-    if (existing) {
+    if (checkError) {
+      console.error('❌ 중복 체크 오류:', checkError.message);
+    }
+    
+    if (existing && existing.length > 0) {
       console.log(`⚠️  ID ${review.id}는 이미 존재합니다. 건너뜀.`);
       return true; // 이미 존재하면 성공으로 처리
     }
