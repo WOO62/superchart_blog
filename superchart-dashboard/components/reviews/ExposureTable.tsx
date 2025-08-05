@@ -27,8 +27,6 @@ type EditField = 'success_status' | 'first_check_rank' | 'second_check_rank' | '
 export function ExposureTable() {
   const [data, setData] = useState<ExposureData[]>([])
   const [loading, setLoading] = useState(true)
-  const [editingCell, setEditingCell] = useState<{ id: number; field: EditField } | null>(null)
-  const [editValue, setEditValue] = useState<string>('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalCount, setTotalCount] = useState(0)
   const itemsPerPage = 50
@@ -127,55 +125,28 @@ export function ExposureTable() {
   }
 
   // 데이터 업데이트
-  const updateData = async () => {
-    if (!editingCell) return
-
+  const updateData = async (id: number, field: EditField, value: string) => {
     try {
       const updateObj: any = {}
-      updateObj[editingCell.field] = editValue || null
+      updateObj[field] = value || null
 
       const { error } = await supabase
         .from('exposure_tracking')
         .update(updateObj)
-        .eq('id', editingCell.id)
+        .eq('id', id)
 
       if (error) throw error
 
-      setData(prev => prev.map(item => 
-        item.id === editingCell.id 
-          ? { ...item, [editingCell.field]: editValue || null }
-          : item
-      ))
-      
-      setEditingCell(null)
-      setEditValue('')
+      // 성공 시 UI 업데이트는 이미 onChange에서 처리되므로 생략
+      console.log(`✅ ${field} 업데이트 성공`)
     } catch (error) {
       console.error('업데이트 실패:', error)
       alert('업데이트에 실패했습니다.')
+      // 실패 시 원래 데이터로 복구
+      fetchData()
     }
   }
 
-  // 편집 시작
-  const startEdit = (item: ExposureData, field: EditField) => {
-    setEditingCell({ id: item.id, field })
-    setEditValue(item[field] || '')
-  }
-
-  // 편집 취소
-  const cancelEdit = () => {
-    setEditingCell(null)
-    setEditValue('')
-  }
-
-  // 엔터키 핸들러
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      updateData()
-    } else if (e.key === 'Escape') {
-      cancelEdit()
-    }
-  }
 
   // 검색 핸들러
   const handleSearch = (e: React.FormEvent) => {
@@ -247,10 +218,9 @@ export function ExposureTable() {
       )
       .on('postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'exposure_tracking' },
-        (payload) => {
-          if (!editingCell || editingCell.id !== payload.new.id) {
-            fetchData()
-          }
+        () => {
+          // 다른 사용자의 업데이트를 반영
+          fetchData()
         }
       )
       .subscribe()
@@ -258,7 +228,7 @@ export function ExposureTable() {
     return () => {
       supabase.removeChannel(channel)
     }
-  }, [currentPage, editingCell])
+  }, [currentPage])
 
   if (loading && data.length === 0) {
     return (
@@ -454,36 +424,32 @@ export function ExposureTable() {
                     {formatKeywords(item.keywords)}
                   </div>
                 </td>
-                <td 
-                  className="px-4 py-3 text-sm whitespace-nowrap cursor-pointer"
-                  onClick={() => !(editingCell?.id === item.id && editingCell?.field === 'success_status') && startEdit(item, 'success_status')}
-                >
-                  {editingCell?.id === item.id && editingCell?.field === 'success_status' ? (
-                    <select
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      onBlur={updateData}
-                      className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <option value="pending">대기</option>
-                      <option value="success">성공</option>
-                      <option value="failure">실패</option>
-                    </select>
-                  ) : (
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full hover:opacity-80 ${
+                <td className="px-4 py-3 text-sm whitespace-nowrap">
+                  <select
+                    value={item.success_status}
+                    onChange={(e) => {
+                      const newValue = e.target.value as 'pending' | 'success' | 'failure'
+                      // 즉시 UI 업데이트
+                      setData(prev => prev.map(row => 
+                        row.id === item.id 
+                          ? { ...row, success_status: newValue }
+                          : row
+                      ))
+                      // DB 업데이트
+                      updateData(item.id, 'success_status', newValue)
+                    }}
+                    className={`block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary cursor-pointer ${
                       item.success_status === 'success' 
-                        ? 'bg-green-100 text-green-800'
+                        ? 'bg-green-50 text-green-800 border-green-300'
                         : item.success_status === 'failure'
-                        ? 'bg-red-100 text-red-800'
-                        : 'bg-gray-100 text-gray-800'
-                    }`}>
-                      {item.success_status === 'success' ? '성공' : 
-                       item.success_status === 'failure' ? '실패' : '대기'}
-                    </span>
-                  )}
+                        ? 'bg-red-50 text-red-800 border-red-300'
+                        : 'bg-gray-50 text-gray-800'
+                    }`}
+                  >
+                    <option value="pending">대기</option>
+                    <option value="success">성공</option>
+                    <option value="failure">실패</option>
+                  </select>
                 </td>
                 <td className="px-4 py-3 text-sm text-gray-900">
                   <a
@@ -496,67 +462,72 @@ export function ExposureTable() {
                     <span>보기</span>
                   </a>
                 </td>
-                <td 
-                  className="px-4 py-3 text-sm text-gray-900 cursor-pointer hover:bg-gray-50"
-                  onClick={() => !(editingCell?.id === item.id && editingCell?.field === 'first_check_rank') && startEdit(item, 'first_check_rank')}
-                >
-                  {editingCell?.id === item.id && editingCell?.field === 'first_check_rank' ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      onBlur={updateData}
-                      className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      placeholder="순위 입력"
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <span className="block px-2 py-1 hover:bg-gray-100 rounded">{item.first_check_rank || '-'}</span>
-                  )}
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  <input
+                    type="text"
+                    value={item.first_check_rank || ''}
+                    onChange={(e) => {
+                      setData(prev => prev.map(row => 
+                        row.id === item.id 
+                          ? { ...row, first_check_rank: e.target.value }
+                          : row
+                      ))
+                    }}
+                    onBlur={(e) => updateData(item.id, 'first_check_rank', e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        updateData(item.id, 'first_check_rank', e.currentTarget.value)
+                      }
+                    }}
+                    className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary hover:bg-gray-50"
+                    placeholder="-"
+                  />
                 </td>
-                <td 
-                  className="px-4 py-3 text-sm text-gray-900 cursor-pointer hover:bg-gray-50"
-                  onClick={() => !(editingCell?.id === item.id && editingCell?.field === 'second_check_rank') && startEdit(item, 'second_check_rank')}
-                >
-                  {editingCell?.id === item.id && editingCell?.field === 'second_check_rank' ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      onBlur={updateData}
-                      className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      placeholder="순위 입력"
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <span className="block px-2 py-1 hover:bg-gray-100 rounded">{item.second_check_rank || '-'}</span>
-                  )}
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  <input
+                    type="text"
+                    value={item.second_check_rank || ''}
+                    onChange={(e) => {
+                      setData(prev => prev.map(row => 
+                        row.id === item.id 
+                          ? { ...row, second_check_rank: e.target.value }
+                          : row
+                      ))
+                    }}
+                    onBlur={(e) => updateData(item.id, 'second_check_rank', e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        updateData(item.id, 'second_check_rank', e.currentTarget.value)
+                      }
+                    }}
+                    className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary hover:bg-gray-50"
+                    placeholder="-"
+                  />
                 </td>
-                <td 
-                  className="px-4 py-3 text-sm text-gray-900 cursor-pointer hover:bg-gray-50"
-                  onClick={() => !(editingCell?.id === item.id && editingCell?.field === 'feedback') && startEdit(item, 'feedback')}
-                >
-                  {editingCell?.id === item.id && editingCell?.field === 'feedback' ? (
-                    <input
-                      type="text"
-                      value={editValue}
-                      onChange={(e) => setEditValue(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      onBlur={updateData}
-                      className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary"
-                      placeholder="피드백 입력"
-                      autoFocus
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  ) : (
-                    <div className="max-w-xs truncate px-2 py-1 hover:bg-gray-100 rounded" title={item.feedback || ''}>
-                      {item.feedback || '-'}
-                    </div>
-                  )}
+                <td className="px-4 py-3 text-sm text-gray-900">
+                  <input
+                    type="text"
+                    value={item.feedback || ''}
+                    onChange={(e) => {
+                      setData(prev => prev.map(row => 
+                        row.id === item.id 
+                          ? { ...row, feedback: e.target.value }
+                          : row
+                      ))
+                    }}
+                    onBlur={(e) => updateData(item.id, 'feedback', e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter') {
+                        e.preventDefault()
+                        updateData(item.id, 'feedback', e.currentTarget.value)
+                      }
+                    }}
+                    className="block w-full px-2 py-1 text-sm border border-gray-300 rounded-md focus:ring-primary focus:border-primary hover:bg-gray-50"
+                    placeholder="메모 입력"
+                    title={item.feedback || ''}
+                  />
                 </td>
               </tr>
             ))}
