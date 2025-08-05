@@ -130,18 +130,28 @@ export function ExposureTable() {
       const updateObj: any = {}
       updateObj[field] = value || null
 
-      const { error } = await supabase
+      console.log(`🔄 업데이트 시도 - ID: ${id}, Field: ${field}, Value: ${value}`)
+
+      const { data, error } = await supabase
         .from('exposure_tracking')
         .update(updateObj)
         .eq('id', id)
+        .select()
 
-      if (error) throw error
+      if (error) {
+        console.error('❌ Supabase 업데이트 에러:', {
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          code: error.code
+        })
+        throw error
+      }
 
-      // 성공 시 UI 업데이트는 이미 onChange에서 처리되므로 생략
-      console.log(`✅ ${field} 업데이트 성공`)
-    } catch (error) {
-      console.error('업데이트 실패:', error)
-      alert('업데이트에 실패했습니다.')
+      console.log(`✅ ${field} 업데이트 성공`, data)
+    } catch (error: any) {
+      console.error('❌ 업데이트 실패:', error)
+      alert(`업데이트에 실패했습니다.\n${error.message || '알 수 없는 오류'}`)
       // 실패 시 원래 데이터로 복구
       fetchData()
     }
