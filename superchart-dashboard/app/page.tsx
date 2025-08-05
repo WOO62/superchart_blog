@@ -24,8 +24,13 @@ export default function DashboardPage() {
   const fetchStats = async () => {
     try {
       const response = await fetch('/api/dashboard/stats')
-      if (!response.ok) throw new Error('통계 데이터 로드 실패')
       const data = await response.json()
+      
+      if (!response.ok) {
+        console.error('통계 API 오류:', data)
+        throw new Error(data.error || '통계 데이터 로드 실패')
+      }
+      
       setStatsData(data)
     } catch (error) {
       console.error('통계 데이터 로드 오류:', error)
@@ -38,8 +43,13 @@ export default function DashboardPage() {
   const fetchCharts = async () => {
     try {
       const response = await fetch('/api/dashboard/charts')
-      if (!response.ok) throw new Error('차트 데이터 로드 실패')
       const data = await response.json()
+      
+      if (!response.ok) {
+        console.error('차트 API 오류:', data)
+        throw new Error(data.error || '차트 데이터 로드 실패')
+      }
+      
       setChartData(data.salesData || [])
       setVolumeData(data.volumeData || [])
     } catch (error) {

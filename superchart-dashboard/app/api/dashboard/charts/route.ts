@@ -50,7 +50,7 @@ export async function GET() {
       const [blogRows] = await connection.execute(`
         SELECT COALESCE(SUM(amount), 0) as total
         FROM Charges
-        WHERE ((\`order\` LIKE '%matching%' OR \`order\` IS NULL))
+        WHERE (\`order\` LIKE '%matching%' OR \`order\` IS NULL)
           AND purpose IS NULL
           AND created_at >= ?
           AND created_at < ?
@@ -104,10 +104,14 @@ export async function GET() {
       volumeData
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('차트 데이터 조회 오류:', error)
     return NextResponse.json(
-      { error: '데이터 조회 중 오류가 발생했습니다.' },
+      { 
+        error: '데이터 조회 중 오류가 발생했습니다.',
+        details: error.message,
+        code: error.code 
+      },
       { status: 500 }
     )
   } finally {
