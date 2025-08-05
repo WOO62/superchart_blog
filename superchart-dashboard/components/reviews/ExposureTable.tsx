@@ -127,28 +127,31 @@ export function ExposureTable() {
   // 데이터 업데이트
   const updateData = async (id: number, field: EditField, value: string) => {
     try {
-      const updateObj: any = {}
-      updateObj[field] = value || null
-
       console.log(`🔄 업데이트 시도 - ID: ${id}, Field: ${field}, Value: ${value}`)
 
-      const { data, error } = await supabase
-        .from('exposure_tracking')
-        .update(updateObj)
-        .eq('id', id)
-        .select()
+      // API 엔드포인트를 통해 업데이트
+      const response = await fetch('/api/exposure/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ id, field, value }),
+      })
 
-      if (error) {
-        console.error('❌ Supabase 업데이트 에러:', {
-          message: error.message,
-          details: error.details,
-          hint: error.hint,
-          code: error.code
-        })
-        throw error
+      const result = await response.json()
+
+      if (!response.ok) {
+        throw new Error(result.error || '업데이트 실패')
       }
 
-      console.log(`✅ ${field} 업데이트 성공`, data)
+      console.log(`✅ ${field} 업데이트 성공 - ID: ${id}`, result.data)
+      
+      // 성공 시 로컬 데이터도 업데이트 (서버 응답 데이터로)
+      if (result.data) {
+        setData(prev => prev.map(item => 
+          item.id === id ? { ...item, ...result.data } : item
+        ))
+      }
     } catch (error: any) {
       console.error('❌ 업데이트 실패:', error)
       alert(`업데이트에 실패했습니다.\n${error.message || '알 수 없는 오류'}`)
@@ -228,9 +231,15 @@ export function ExposureTable() {
       )
       .on('postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'exposure_tracking' },
-        () => {
-          // 다른 사용자의 업데이트를 반영
-          fetchData()
+        (payload) => {
+          console.log('📡 실시간 업데이트 감지:', payload)
+          // 자신이 업데이트한 것이 아닌 경우에만 새로고침
+          const updatedItem = payload.new as ExposureData
+          if (updatedItem) {
+            setData(prev => prev.map(item => 
+              item.id === updatedItem.id ? updatedItem : item
+            ))
+          }
         }
       )
       .subscribe()
