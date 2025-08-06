@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts'
 
 // 색상 팔레트 정의
-const COLORS = {
+const COLORS: { [key: string]: string } = {
   'salt': '#EF4444', // 빨간색
   'yuzu': '#3B82F6', // 파란색
   'kelly': '#10B981', // 초록색
