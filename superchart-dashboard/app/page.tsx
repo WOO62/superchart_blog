@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react'
 import { SalesCard } from '@/components/dashboard/SalesCard'
 import { SalesChart } from '@/components/dashboard/SalesChart'
 import { VolumeChart } from '@/components/dashboard/VolumeChart'
+import ManagerStatsCard from '@/components/ManagerStatsCard'
+import AcceptanceChargeChart from '@/components/AcceptanceChargeChart'
 import { DollarSign, TrendingUp, Calendar } from 'lucide-react'
 
 export default function DashboardPage() {
@@ -99,9 +101,15 @@ export default function DashboardPage() {
       </div>
 
       {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         <SalesChart data={chartData} loading={chartLoading} />
         <VolumeChart data={volumeData} loading={chartLoading} />
+      </div>
+
+      {/* Manager Stats and Acceptance/Charge Chart */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <ManagerStatsCard />
+        <AcceptanceChargeChart />
       </div>
     </div>
   )
