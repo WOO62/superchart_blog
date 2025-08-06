@@ -94,15 +94,7 @@ export default function ManagerStatsCard() {
 
   return (
     <div className="bg-white p-6 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold">매니저별 금액 현황 (이번 달)</h3>
-        <button
-          onClick={togglePastStats}
-          className="text-sm text-blue-600 hover:text-blue-800 focus:outline-none"
-        >
-          {showPast ? '접기 ▲' : '지난 금액 현황 ▼'}
-        </button>
-      </div>
+      <h3 className="text-lg font-semibold mb-4">매니저별 금액 현황 (이번 달)</h3>
       <div className="space-y-4">
         {managers.length === 0 ? (
           <p className="text-gray-500 text-center py-4">데이터가 없습니다</p>
@@ -157,9 +149,19 @@ export default function ManagerStatsCard() {
         )}
       </div>
 
+      {/* 지난 금액 현황 버튼 */}
+      <div className="mt-4 pt-4 border-t">
+        <button
+          onClick={togglePastStats}
+          className="w-full text-center text-sm text-blue-600 hover:text-blue-800 focus:outline-none py-2 rounded-lg hover:bg-gray-50 transition-colors"
+        >
+          {showPast ? '접기 ▲' : '지난 금액 현황 ▼'}
+        </button>
+      </div>
+
       {/* 과거 데이터 표시 */}
       {showPast && (
-        <div className="mt-6 pt-6 border-t">
+        <div className="mt-4">
           <h4 className="text-md font-semibold mb-4 text-gray-700">지난 금액 현황</h4>
           {loadingPast ? (
             <div className="animate-pulse space-y-3">
