@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server'
 import mysql from 'mysql2/promise'
 
-export async function GET() {
+export async function GET(request: Request) {
   let connection
+  
+  // URL 파라미터에서 월 정보 가져오기
+  const { searchParams } = new URL(request.url)
+  const yearParam = searchParams.get('year')
+  const monthParam = searchParams.get('month')
 
   try {
     connection = await mysql.createConnection({
@@ -16,10 +21,13 @@ export async function GET() {
       }
     })
 
-    // 이번 달 시작일
+    // 요청된 년월 또는 이번 달 시작일
     const now = new Date()
-    const thisMonthStart = new Date(now.getFullYear(), now.getMonth(), 1)
-    const nextMonthStart = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+    const targetYear = yearParam ? parseInt(yearParam) : now.getFullYear()
+    const targetMonth = monthParam ? parseInt(monthParam) - 1 : now.getMonth()
+    
+    const thisMonthStart = new Date(targetYear, targetMonth, 1)
+    const nextMonthStart = new Date(targetYear, targetMonth + 1, 1)
 
     // 매니저별 수락금액 (이번 달)
     const [acceptanceRows] = await connection.execute<any[]>(`
