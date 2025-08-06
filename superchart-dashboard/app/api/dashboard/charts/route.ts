@@ -158,7 +158,7 @@ export async function GET() {
           END
       `, [monthStart, monthEnd])
 
-      const monthItem = {
+      const monthItem: any = {
         date: monthData.label
       }
       
